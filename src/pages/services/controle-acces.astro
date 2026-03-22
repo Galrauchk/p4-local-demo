@@ -1,0 +1,33 @@
+---
+import ServicePageTemplate from "../../components/ServicePageTemplate.astro";
+---
+
+<ServicePageTemplate
+  title="Contrôle d'accès"
+  description="Installation de système de contrôle d'accès à Lyon — digicode, badge, interphone, biométrie. Sécurisez votre immeuble ou entreprise. ProSec Serrurerie Lyon."
+  icon="📲"
+  hero_title="Contrôle d'accès à Lyon — Immeuble & Entreprise"
+  hero_sub="Digicodes, badges RFID, interphones IP, biométrie — ProSec installe et maintient vos systèmes de contrôle d'accès sur Lyon et la métropole."
+  prix_from="200€ TTC"
+  schema_service="Installation et maintenance de contrôle d'accès"
+  what_is="<p>Le contrôle d'accès permet de <strong>gérer qui entre dans votre bâtiment</strong> et à quel moment, sans remise de clé physique. Idéal pour les immeubles résidentiels, les entreprises, les commerces et les cabinets professionnels.</p><p style='margin-top:1rem;'>ProSec installe des solutions adaptées à chaque besoin : <strong>digicodes</strong> (code PIN), <strong>lecteurs de badges RFID</strong>, <strong>interphones vidéo</strong>, <strong>accès biométriques</strong> (empreinte digitale, reconnaissance faciale). Toutes nos installations sont compatibles avec la gestion à distance via smartphone.</p>"
+  steps={[
+    { title: "Audit de sécurité", desc: "Visite du site pour comprendre vos flux de personnes, vos besoins et contraintes techniques." },
+    { title: "Proposition de solution", desc: "Présentation d'une solution sur mesure avec devis détaillé et plan d'installation." },
+    { title: "Installation et câblage", desc: "Pose des lecteurs, des centrales, du câblage (ou connexion sans fil). Travaux propres." },
+    { title: "Paramétrage", desc: "Configuration des badges, codes, horaires d'accès et niveaux d'autorisation." },
+    { title: "Formation", desc: "Formation de votre gestionnaire ou équipe sur l'utilisation du système." },
+    { title: "Maintenance", desc: "Contrat de maintenance préventive et curative disponible. Support téléphonique 24h." },
+  ]}
+  prices={[
+    { label: "Digicode simple", prix: "200€", desc: "Installation d'un digicode sur porte existante, programmation incluse." },
+    { label: "Badge RFID", prix: "350€", desc: "Lecteur de badge avec centrale, 10 badges inclus, gestion via app." },
+    { label: "Système complet", prix: "Sur devis", desc: "Contrôle multi-portes, biométrie, interphone vidéo, gestion cloud." },
+  ]}
+  faqs={[
+    { q: "Quel système de contrôle d'accès est le mieux pour un immeuble résidentiel ?", a: "Le digicode numérique couplé à un badge RFID est souvent le meilleur compromis : sécurité élevée, facilité d'utilisation et gestion simple des accès en cas de changement de locataire." },
+    { q: "Peut-on gérer les accès à distance ?", a: "Oui, nos systèmes connectés permettent d'accorder ou de révoquer un accès depuis votre smartphone, de suivre les entrées/sorties en temps réel et de recevoir des alertes." },
+    { q: "Que se passe-t-il en cas de panne électrique ?", a: "Nos systèmes incluent des batteries de secours pour maintenir le fonctionnement en cas de coupure. Un mode ouverture de secours est également prévu." },
+    { q: "Intervenez-vous pour les copropriétés ?", a: "Oui. Nous travaillons avec les syndics de copropriété et les gestionnaires d'immeuble pour l'installation et la maintenance des accès collectifs." },
+  ]}
+/>

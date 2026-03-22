@@ -1,0 +1,33 @@
+---
+import ServicePageTemplate from "../../components/ServicePageTemplate.astro";
+---
+
+<ServicePageTemplate
+  title="Ouverture de porte"
+  description="Serrurier pour ouverture de porte à Lyon — Intervention urgente 24h/7j, moins de 30 min, sans dégâts. Clé cassée, porte claquée, serrure bloquée : ProSec intervient."
+  icon="🔓"
+  hero_title="Ouverture de porte à Lyon — Urgence 24h/7j"
+  hero_sub="Porte claquée, clé cassée, serrure bloquée ? Notre serrurier arrive en moins de 30 minutes dans tout le Grand Lyon. Sans dégâts garantis."
+  prix_from="69€ TTC"
+  schema_service="Ouverture de porte d'urgence"
+  what_is="<p>L'ouverture de porte d'urgence consiste à ouvrir une porte verrouillée <strong>sans endommager la serrure ni la porte</strong>. Nos serruriers formés utilisent des techniques professionnelles adaptées à chaque type de serrure : carte de crochetage, jeu de crochets, ou bumping.</p><p style='margin-top:1rem;'>À Lyon, nous intervenons pour toutes les situations d'urgence : <strong>porte claquée</strong>, clé perdue, clé cassée dans la serrure, serrure grippée, code oublié sur une porte blindée. Nous sommes disponibles <strong>24h/24, 7j/7</strong>, y compris les nuits et jours fériés.</p>"
+  steps={[
+    { title: "Appel et devis téléphonique", desc: "Décrivez votre situation au 04 78 00 11 22. Nous vous donnons un prix ferme immédiatement." },
+    { title: "Départ du technicien", desc: "Un serrurier agréé part immédiatement. Il est chez vous en moins de 30 minutes." },
+    { title: "Diagnostic sur place", desc: "Le technicien évalue votre serrure et valide le devis en présence du client." },
+    { title: "Ouverture sans dégâts", desc: "Techniques non destructives. Votre porte et serrure restent intactes dans 95% des cas." },
+    { title: "Vérification et conseil", desc: "Nous testons l'ouverture et vous conseillons si un remplacement s'avère nécessaire." },
+    { title: "Facture et rapport assurance", desc: "Facture détaillée fournie pour votre assurance habitation. Paiement sur place." },
+  ]}
+  prices={[
+    { label: "Serrure standard", prix: "69€", desc: "Porte d'appartement, serrure 3 points standard, horaires normaux." },
+    { label: "Serrure multipoints", prix: "89€", desc: "Serrure 5 points ou plus. Technique de crochetage avancée." },
+    { label: "Porte blindée", prix: "Sur devis", desc: "Selon le modèle. Devis gratuit avant toute intervention." },
+  ]}
+  faqs={[
+    { q: "Combien de temps prend l'ouverture d'une porte ?", a: "En général, l'ouverture d'une serrure standard prend entre 5 et 20 minutes selon le type de serrure. Une serrure haute sécurité peut nécessiter plus de temps." },
+    { q: "Y a-t-il un supplément la nuit ou le week-end ?", a: "Non. Nos tarifs sont identiques 24h/24, 7j/7. Aucun supplément de nuit, de week-end ou de jour férié." },
+    { q: "Dois-je prouver que je suis le propriétaire ou locataire ?", a: "Oui, nous vous demanderons une pièce d'identité et si possible un justificatif de domicile avant d'intervenir, pour votre sécurité." },
+    { q: "L'assurance couvre-t-elle l'ouverture de porte ?", a: "Souvent oui. De nombreux contrats d'assurance habitation couvrent les frais de serrurerie d'urgence. Nous fournissons tous les justificatifs nécessaires." },
+  ]}
+/>

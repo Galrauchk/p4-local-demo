@@ -1,0 +1,33 @@
+---
+import ServicePageTemplate from "../../components/ServicePageTemplate.astro";
+---
+
+<ServicePageTemplate
+  title="Remplacement de serrure"
+  description="Remplacement de serrure à Lyon par un serrurier agréé. Serrures A2P, multipoints, haute sécurité. Devis gratuit, intervention rapide 24h/7j. ProSec Serrurerie."
+  icon="🔧"
+  hero_title="Remplacement de serrure à Lyon — Certifié A2P"
+  hero_sub="Installation de serrures haute sécurité certifiées A2P. Votre serrurier agréé assurance intervient en moins de 30 minutes sur tout Lyon."
+  prix_from="89€ TTC"
+  schema_service="Remplacement et installation de serrure"
+  what_is="<p>Le remplacement de serrure est recommandé après un <strong>cambriolage</strong>, un déménagement, une perte de clé, ou lorsque votre serrure est ancienne et ne répond plus aux normes de sécurité actuelles.</p><p style='margin-top:1rem;'>ProSec installe exclusivement des serrures <strong>certifiées A2P</strong> (Assurance Prévention Protection), reconnues par toutes les compagnies d'assurance habitation. Nous proposons des marques de référence : Fichet, Abloy, Mul-T-Lock, Vachette. Le remplacement inclut également l'ajustement de la gâche, du cylindre et de la poignée.</p>"
+  steps={[
+    { title: "Diagnostic de votre serrure", desc: "Le technicien évalue l'état de votre serrure et le type de remplacement nécessaire." },
+    { title: "Choix de la serrure", desc: "Nous vous présentons plusieurs options selon votre porte, votre budget et les exigences de votre assurance." },
+    { title: "Dépose de l'ancienne serrure", desc: "Retrait soigneux de l'ancienne serrure sans endommager la porte." },
+    { title: "Pose de la nouvelle serrure", desc: "Installation selon les normes du fabricant et tests de fonctionnement complets." },
+    { title: "Remise des clés", desc: "Minimum 3 jeux de clés remis. Gravure possible pour clés supplémentaires." },
+    { title: "Rapport agréé assurance", desc: "Facture et certificat d'installation A2P pour votre assurance." },
+  ]}
+  prices={[
+    { label: "Cylindre seul", prix: "89€", desc: "Remplacement du cylindre A2P, fourniture et pose incluse." },
+    { label: "Serrure multipoints", prix: "149€", desc: "Serrure 3 à 5 points certifiée A2P, pose comprise." },
+    { label: "Haute sécurité", prix: "Sur devis", desc: "Serrure connectée, biométrique ou haute sécurité sur mesure." },
+  ]}
+  faqs={[
+    { q: "Quelle marque de serrure recommandez-vous ?", a: "Nous travaillons principalement avec Fichet, Mul-T-Lock et Vachette, toutes certifiées A2P et reconnues par les assurances." },
+    { q: "La nouvelle serrure sera-t-elle agréée par mon assurance ?", a: "Oui. Toutes nos serrures sont certifiées A2P et accompagnées d'un certificat d'installation valable pour les remboursements assurance." },
+    { q: "Combien de clés puis-je avoir ?", a: "Nous fournissons au minimum 3 jeux de clés. Des doubles peuvent être commandés ultérieurement avec votre carte de propriété de clé." },
+    { q: "Puis-je garder la même porte après remplacement ?", a: "Dans la grande majorité des cas, oui. Nous adaptons la serrure à votre porte existante. Un remplacement complet de porte n'est nécessaire qu'en cas de dégradation majeure." },
+  ]}
+/>

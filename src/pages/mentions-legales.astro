@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Mentions légales"
+  description="Mentions légales de ProSec Serrurerie — Lyon. Informations légales, éditeur du site, hébergement, données personnelles."
+  noIndex={true}
+>
+  <TopBar />
+  <Header />
+  <main style="background: #f8fafc; min-height: 80vh;">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+      <h1 style="font-size: 2.25rem; font-weight: 900; color: #0a0f1e; margin-bottom: 0.75rem;">Mentions légales</h1>
+      <p style="color: #6b7280; margin-bottom: 3rem; font-size: 0.875rem;">Dernière mise à jour : 1er janvier 2024</p>
+
+      <div style="display: flex; flex-direction: column; gap: 2.5rem; font-size: 0.9375rem; color: #374151; line-height: 1.8;">
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">1. Éditeur du site</h2>
+          <p><strong>ProSec Serrurerie</strong><br/>
+          Entreprise individuelle<br/>
+          Siège social : Lyon, 69000<br/>
+          Téléphone : 04 78 00 11 22<br/>
+          Email : contact@prosec-serrurerie.fr<br/>
+          SIRET : 890 123 456 00011<br/>
+          APE : 4322A — Travaux d'installation d'eau et de gaz<br/>
+          RCS Lyon : 890 123 456</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">2. Directeur de la publication</h2>
+          <p>Julien Marchand, gérant de ProSec Serrurerie.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">3. Hébergement</h2>
+          <p><strong>Netlify, Inc.</strong><br/>
+          2325 3rd Street, Suite 296<br/>
+          San Francisco, CA 94107, USA<br/>
+          <a href="https://www.netlify.com" style="color: #0066ff;">www.netlify.com</a></p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">4. Propriété intellectuelle</h2>
+          <p>L'ensemble du contenu de ce site (textes, images, visuels, structure) est la propriété exclusive de ProSec Serrurerie. Toute reproduction, même partielle, est interdite sans accord préalable écrit.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">5. Données personnelles (RGPD)</h2>
+          <p>Les données collectées via le formulaire de contact sont utilisées uniquement pour répondre à vos demandes. Elles ne sont jamais cédées à des tiers. Conformément à la loi Informatique et Libertés du 6 janvier 1978 et au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à : contact@prosec-serrurerie.fr</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">6. Cookies</h2>
+          <p>Ce site peut utiliser des cookies techniques nécessaires à son fonctionnement. Aucun cookie publicitaire ou de tracking tiers n'est utilisé sans votre consentement.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">7. Responsabilité</h2>
+          <p>ProSec Serrurerie s'efforce de maintenir les informations de ce site à jour. Cependant, nous ne garantissons pas l'exactitude complète des informations publiées et déclinons toute responsabilité pour les erreurs éventuelles.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

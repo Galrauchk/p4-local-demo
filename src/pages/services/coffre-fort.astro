@@ -1,0 +1,33 @@
+---
+import ServicePageTemplate from "../../components/ServicePageTemplate.astro";
+---
+
+<ServicePageTemplate
+  title="Coffre-fort"
+  description="Installation, ouverture et dépannage de coffre-fort à Lyon. Serrurier agréé toutes marques. Combinaison perdue, coffre bloqué : intervention rapide 24h/7j. ProSec Lyon."
+  icon="🏛️"
+  hero_title="Coffre-fort à Lyon — Installation & Dépannage"
+  hero_sub="Ouverture de coffre-fort bloqué, code perdu, installation neuve — ProSec intervient sur tous les modèles à Lyon et dans le Grand Lyon."
+  prix_from="120€ TTC"
+  schema_service="Service coffre-fort — installation et dépannage"
+  what_is="<p>Nos serruriers sont spécialisés dans <strong>tous les services liés aux coffres-forts</strong> : installation de coffre neuf, ouverture d'urgence (code perdu, panne électronique, blocage mécanique), changement de combinaison et entretien.</p><p style='margin-top:1rem;'>Nous intervenons sur <strong>toutes les marques</strong> : Fichet, Hartmann, Bordogna, Burg-Wächter, Phoenix, Chubbsafes, et bien d'autres. Nos techniciens sont formés par les fabricants et disposent de l'outillage spécialisé pour chaque modèle, sans endommager le coffre.</p>"
+  steps={[
+    { title: "Identification du modèle", desc: "Relevé de la marque, référence et numéro de série du coffre pour préparer l'intervention." },
+    { title: "Devis téléphonique", desc: "Prix estimatif donné par téléphone selon le modèle et la panne." },
+    { title: "Ouverture non destructive", desc: "Nos experts utilisent des techniques de manipulation douce avant tout recours destructif." },
+    { title: "Diagnostic et réparation", desc: "Identification de la panne (électronique, mécanique) et réparation si possible." },
+    { title: "Changement de combinaison", desc: "Nouvelle combinaison au choix du client, testée 5 fois avant départ du technicien." },
+    { title: "Conseils sécurité", desc: "Conseils sur le scellement du coffre et son positionnement optimal." },
+  ]}
+  prices={[
+    { label: "Changement de combinaison", prix: "120€", desc: "Coffre accessible. Nouvelle combinaison, test complet." },
+    { label: "Ouverture urgence", prix: "180€", desc: "Code perdu ou bloqué. Technique non destructive en priorité." },
+    { label: "Installation neuve", prix: "Sur devis", desc: "Fourniture et scellement. Devis selon modèle choisi." },
+  ]}
+  faqs={[
+    { q: "Pouvez-vous ouvrir un coffre sans en connaître la combinaison ?", a: "Oui, nos serruriers sont formés aux techniques d'ouverture non destructive. Dans certains cas, une preuve de propriété sera demandée." },
+    { q: "Combien de temps dure l'ouverture d'un coffre-fort ?", a: "Cela varie selon la marque et le type de blocage. En général entre 30 minutes et 2 heures pour une ouverture non destructive." },
+    { q: "Puis-je obtenir le code de mon coffre Fichet chez vous ?", a: "Non, les codes Fichet ne peuvent être fournis que par Fichet directement sur présentation de la carte propriétaire. Nous pouvons en revanche ouvrir le coffre et en changer la combinaison." },
+    { q: "Intervenez-vous pour les entreprises ?", a: "Oui, nous intervenons pour les particuliers et les professionnels (commerces, cabinets médicaux, agences immobilières) sur Lyon et le Rhône." },
+  ]}
+/>

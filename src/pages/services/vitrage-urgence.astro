@@ -1,0 +1,33 @@
+---
+import ServicePageTemplate from "../../components/ServicePageTemplate.astro";
+---
+
+<ServicePageTemplate
+  title="Vitrage d'urgence"
+  description="Remplacement de vitrage en urgence à Lyon — bris de glace, fenêtre cassée, porte vitrée brisée. Intervention rapide 24h/7j. Agréé assurance. ProSec Serrurerie Lyon."
+  icon="🪟"
+  hero_title="Vitrage d'urgence à Lyon — Bris de glace 24h/7j"
+  hero_sub="Fenêtre cassée, porte vitrée brisée, bris de glace suite à cambriolage ? ProSec intervient en urgence pour sécuriser et remplacer votre vitrage sur Lyon."
+  prix_from="79€ TTC"
+  schema_service="Remplacement de vitrage d'urgence"
+  what_is="<p>Le vitrage d'urgence intervient dans toutes les situations où une vitre est <strong>brisée ou endommagée</strong> et nécessite un remplacement immédiat pour sécuriser votre logement ou votre commerce. Une fenêtre cassée représente un danger physique et une faille de sécurité immédiate.</p><p style='margin-top:1rem;'>ProSec intervient pour : <strong>bris de glace suite à cambriolage</strong>, accident (balle, choc, chute), vandalisme, verre fissuré ou explosé. Nous remplaçons les vitres simples, doubles et triples vitrages, les vitres de sécurité (feuilletées, trempées), les vérandas et portes coulissantes.</p>"
+  steps={[
+    { title: "Sécurisation immédiate", desc: "En attendant notre arrivée, nous vous guidons pour sécuriser la zone de manière provisoire." },
+    { title: "Pose d'une vitre provisoire", desc: "Planche OSB ou film de sécurité posé immédiatement pour sécuriser l'ouverture." },
+    { title: "Mesure et commande du vitrage", desc: "Prise de cotes précise. Commande du vitrage définitif si non disponible en stock." },
+    { title: "Remplacement du vitrage", desc: "Pose du vitrage définitif dans le respect des normes thermiques et acoustiques." },
+    { title: "Nettoyage et évacuation", desc: "Ramassage et évacuation des débris de verre. Chantier laissé propre." },
+    { title: "Rapport assurance", desc: "Rapport d'intervention et facture détaillée pour remboursement assurance habitation." },
+  ]}
+  prices={[
+    { label: "Simple vitrage", prix: "79€", desc: "Remplacement vitre standard (jusqu'à 1m²). Main d'œuvre incluse." },
+    { label: "Double vitrage", prix: "149€", desc: "Remplacement double vitrage standard. Jusqu'à 1m². Thermique standard." },
+    { label: "Grande surface / spécial", prix: "Sur devis", desc: "Grande baie vitrée, verre feuilleté, porte coulissante, verre thermoformé." },
+  ]}
+  faqs={[
+    { q: "Intervenez-vous la nuit pour un bris de glace ?", a: "Oui, nous intervenons 24h/24 et 7j/7. En attendant le remplacement définitif, nous posons un vitrage provisoire pour sécuriser votre logement." },
+    { q: "L'assurance couvre-t-elle le bris de glace ?", a: "Dans la majorité des contrats d'assurance habitation, oui. La garantie 'bris de glace' couvre les vitrages extérieurs. Vérifiez votre contrat et conservez notre facture." },
+    { q: "Combien de temps pour remplacer un double vitrage ?", a: "Le vitrage provisoire est posé en 30 à 60 minutes. Le remplacement définitif par un double vitrage prend généralement 1 à 3 jours (délai de fabrication)." },
+    { q: "Pouvez-vous remplacer les vitres de mon commerce ?", a: "Oui, nous intervenons pour les particuliers et les professionnels (devantures, vitrines, portes d'entrée vitrées). Devis rapide et intervention discrète." },
+  ]}
+/>

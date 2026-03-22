@@ -1,0 +1,209 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "./TopBar.astro";
+import Header from "./Header.astro";
+import UrgenceBanner from "./UrgenceBanner.astro";
+import Footer from "./Footer.astro";
+import StickyMobileCTA from "./StickyMobileCTA.astro";
+
+export interface Props {
+  title: string;
+  description: string;
+  icon: string;
+  hero_title: string;
+  hero_sub: string;
+  prix_from: string;
+  what_is: string;
+  steps: Array<{ title: string; desc: string }>;
+  prices: Array<{ label: string; prix: string; desc: string }>;
+  faqs: Array<{ q: string; a: string }>;
+  schema_service: string;
+}
+
+const {
+  title,
+  description,
+  icon,
+  hero_title,
+  hero_sub,
+  prix_from,
+  what_is,
+  steps,
+  prices,
+  faqs,
+  schema_service,
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": schema_service,
+    "provider": {
+      "@type": "LocksmithBusiness",
+      "name": "ProSec Serrurerie",
+      "telephone": "+33478001122",
+      "address": { "@type": "PostalAddress", "addressLocality": "Lyon", "postalCode": "69000", "addressCountry": "FR" }
+    },
+    "areaServed": "Grand Lyon"
+  })} />
+
+  <TopBar />
+  <Header />
+  <main>
+
+    <!-- Hero service -->
+    <section
+      style="background: linear-gradient(135deg, #0a0f1e 0%, #141c35 100%); padding: 5rem 0; position: relative; overflow: hidden;"
+    >
+      <div style="position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, rgba(0,229,255,0.02) 0px, rgba(0,229,255,0.02) 1px, transparent 1px, transparent 40px);"></div>
+      <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Badge dispo -->
+        <div class="badge-live inline-flex mb-6">
+          <span class="dot-pulse"></span>
+          <span>Disponible maintenant — Intervention −30 min</span>
+        </div>
+
+        <div style="font-size: 4rem; margin-bottom: 1rem;">{icon}</div>
+
+        <h1
+          style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #ffffff; line-height: 1.1; margin-bottom: 1.25rem;"
+        >
+          {hero_title}
+        </h1>
+        <p
+          style="font-size: 1.125rem; color: rgba(255,255,255,0.7); line-height: 1.6; max-width: 38rem; margin: 0 auto 2.5rem;"
+        >
+          {hero_sub}
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <a href="tel:0478001122" class="btn-cta" style="font-size: 1.0625rem; padding: 1rem 2.25rem;">
+            📞 04 78 00 11 22 — Urgence
+          </a>
+          <a href="/contact" class="btn-outline">
+            Devis gratuit en ligne
+          </a>
+        </div>
+
+        <div
+          style="display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25); padding: 0.625rem 1.5rem; border-radius: 9999px;"
+        >
+          <span style="font-size: 1.25rem;">💰</span>
+          <span style="font-weight: 700; color: #00e5ff;">Prix à partir de {prix_from} — Devis gratuit avant intervention</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Qu'est-ce que c'est -->
+    <section style="background: #ffffff; padding: 4rem 0;">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-10 items-start">
+          <div class="flex-1">
+            <p class="section-label mb-2">En détail</p>
+            <h2 class="section-title mb-5">{title} à Lyon</h2>
+            <div style="font-size: 0.9375rem; color: #4b5563; line-height: 1.8;" set:html={what_is} />
+          </div>
+          <!-- Call box -->
+          <div
+            class="flex-shrink-0"
+            style="background: linear-gradient(135deg, #00e5ff08, #0066ff08); border: 1px solid rgba(0,229,255,0.2); border-radius: 1.5rem; padding: 2rem; width: 100%; max-width: 280px; text-align: center;"
+          >
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔑</div>
+            <p style="font-weight: 700; color: #0a0f1e; margin-bottom: 0.5rem;">Besoin d'aide maintenant ?</p>
+            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1.25rem;">Nos serruriers répondent 24h/7j</p>
+            <a href="tel:0478001122" class="btn-cta" style="font-size: 0.9375rem; padding: 0.75rem 1.5rem; display: block; text-align: center; text-decoration: none;">
+              04 78 00 11 22
+            </a>
+            <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #9ca3af;">Dévis gratuit · Agréé assurance</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Étapes intervention -->
+    <section style="background: #f8fafc; padding: 4rem 0;">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="section-title mb-10 text-center">Comment se déroule l'intervention ?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {steps.map((step, i) => (
+            <div
+              class="card-white"
+              style="padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; border: 1px solid #f1f5f9;"
+            >
+              <div
+                style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #00e5ff, #0066ff); display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 800; color: #0a0f1e; flex-shrink: 0;"
+              >
+                {i + 1}
+              </div>
+              <div>
+                <h3 style="font-size: 1rem; font-weight: 700; color: #0a0f1e; margin-bottom: 0.375rem;">{step.title}</h3>
+                <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.6;">{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Tarifs -->
+    <section style="background: #ffffff; padding: 4rem 0;">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="section-label mb-2">Transparence tarifaire</p>
+        <h2 class="section-title mb-4">Nos tarifs indicatifs</h2>
+        <p class="section-sub mx-auto mb-10">
+          Tous nos prix sont communiqués avant l'intervention. Pas de mauvaise surprise.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {prices.map((p, i) => (
+            <div
+              class="card-white"
+              style={`padding: 1.75rem; border: ${i === 1 ? "2px solid #00e5ff" : "1px solid #f1f5f9"}; position: relative; text-align: left;`}
+            >
+              {i === 1 && (
+                <div
+                  style="position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #00e5ff, #0066ff); color: #0a0f1e; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 1rem; border-radius: 9999px; white-space: nowrap;"
+                >
+                  Le plus populaire
+                </div>
+              )}
+              <p style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">{p.label}</p>
+              <p style="font-size: 2rem; font-weight: 900; color: #0a0f1e; margin-bottom: 0.5rem;">{p.prix}</p>
+              <p style="font-size: 0.875rem; color: #9ca3af; line-height: 1.6;">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p style="margin-top: 1.5rem; font-size: 0.875rem; color: #9ca3af;">
+          * Prix indicatifs TTC. Devis gratuit et précis avant toute intervention.
+        </p>
+      </div>
+    </section>
+
+    <UrgenceBanner />
+
+    <!-- FAQ -->
+    <section style="background: #f8fafc; padding: 4rem 0;">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="section-label mb-2 text-center">On répond à vos questions</p>
+        <h2 class="section-title mb-10 text-center">FAQ — {title}</h2>
+        <div class="flex flex-col gap-4">
+          {faqs.map((faq) => (
+            <details style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 1rem; overflow: hidden;">
+              <summary style="padding: 1.25rem 1.5rem; font-size: 1rem; font-weight: 600; color: #0a0f1e; display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none;">
+                {faq.q}
+                <svg class="chevron w-5 h-5 flex-shrink-0 ml-4" style="color: #00e5ff;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </summary>
+              <div style="padding: 0 1.5rem 1.25rem; font-size: 0.9375rem; color: #4b5563; line-height: 1.7;">{faq.a}</div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+  <StickyMobileCTA />
+</BaseLayout>

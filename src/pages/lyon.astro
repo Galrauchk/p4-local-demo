@@ -1,0 +1,48 @@
+---
+import CityPageTemplate from "../components/CityPageTemplate.astro";
+---
+
+<CityPageTemplate
+  city="Lyon"
+  postal="69000"
+  title="Serrurier Lyon | ProSec — Urgence 24h"
+  description="Serrurier agréé assurance à Lyon — ProSec intervient en moins de 20 minutes dans les 9 arrondissements. Ouverture de porte, blindage, remplacement serrure 24h/7j."
+  lat={45.7640}
+  lng={4.8357}
+  time="20 min"
+  hero_sub="Ouverture de porte, remplacement serrure, blindage — ProSec intervient dans les 9 arrondissements de Lyon. Agréé assurance, devis gratuit, sans supplément de nuit."
+  intro="<p>ProSec Serrurerie est <strong>votre serrurier de référence à Lyon</strong>. Présents depuis plus de 10 ans sur la métropole lyonnaise, nos équipes connaissent parfaitement chaque arrondissement de la ville, du Vieux-Lyon à la Part-Dieu en passant par la Croix-Rousse.</p><p style='margin-top:1rem;'>Chaque jour, nos serruriers agréés interviennent sur <strong>des dizaines de missions à Lyon</strong> : ouvertures de porte en urgence pour des locataires ou propriétaires bloqués, remplacements de serrures après cambriolage, installations de blindages de porte dans les immeubles haussmanniens du 6ème, ou encore changements de cylindres dans les copropriétés. Notre engagement est de <strong>toujours arriver en moins de 20 minutes</strong> et de donner un prix fixe avant toute intervention.</p>"
+  quartiers={[
+    "1er arrondissement", "2ème arrondissement", "3ème arrondissement",
+    "4ème arrondissement", "5ème arrondissement — Vieux-Lyon",
+    "6ème arrondissement", "7ème arrondissement — Guillotière",
+    "8ème arrondissement", "9ème arrondissement — Vaise",
+    "Croix-Rousse", "Part-Dieu", "Confluence", "Perrache",
+  ]}
+  services_dispo={[
+    "Ouverture de porte urgence",
+    "Remplacement de serrure A2P",
+    "Blindage de porte BP1/BP2/BP3",
+    "Coffre-fort — installation & ouverture",
+    "Contrôle d'accès & digicodes",
+    "Vitrage d'urgence & bris de glace",
+  ]}
+  faqs={[
+    {
+      q: "Quel est le délai d'intervention d'un serrurier à Lyon ?",
+      a: "ProSec garantit une intervention en moins de 20 minutes dans les 9 arrondissements de Lyon. Ce délai est garanti ou l'intervention est gratuite."
+    },
+    {
+      q: "Quel est le prix d'un serrurier à Lyon la nuit ?",
+      a: "Nos tarifs sont identiques à toute heure : dès 69€ pour une ouverture de porte, sans supplément de nuit, de week-end ou de jour férié. Le devis est communiqué avant toute intervention."
+    },
+    {
+      q: "Comment trouver un serrurier agréé assurance à Lyon ?",
+      a: "ProSec est agréé par les principales compagnies d'assurance habitation en France. Nous fournissons une facture détaillée et un rapport d'intervention pour faciliter votre remboursement."
+    },
+    {
+      q: "Intervenez-vous dans tous les arrondissements de Lyon ?",
+      a: "Oui, nous couvrons les 9 arrondissements de Lyon : du 1er au 9ème, avec des équipes présentes dans chaque secteur pour garantir le délai de 20 minutes."
+    },
+  ]}
+/>

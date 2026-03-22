@@ -1,0 +1,149 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import Header from "../components/Header.astro";
+import UrgenceBanner from "../components/UrgenceBanner.astro";
+import Footer from "../components/Footer.astro";
+import StickyMobileCTA from "../components/StickyMobileCTA.astro";
+---
+
+<BaseLayout
+  title="À propos de ProSec Serrurerie"
+  description="ProSec Serrurerie — Serrurier agréé assurance à Lyon depuis plus de 10 ans. Découvrez notre histoire, nos valeurs et notre équipe."
+>
+  <TopBar />
+  <Header />
+  <main>
+
+    <!-- Hero -->
+    <section style="background: linear-gradient(135deg, #0a0f1e, #141c35); padding: 5rem 0;">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="section-label mb-3">Notre entreprise</p>
+        <h1 style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #ffffff; margin-bottom: 1.25rem;">
+          ProSec Serrurerie Lyon
+        </h1>
+        <p style="font-size: 1.125rem; color: rgba(255,255,255,0.65); max-width: 38rem; margin: 0 auto;">
+          Serrurier agréé assurance à Lyon depuis 2012. Plus de 10 ans d'expertise au service des Lyonnais.
+        </p>
+      </div>
+    </section>
+
+    <!-- Notre histoire -->
+    <section style="background: #ffffff; padding: 5rem 0;">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <p class="section-label mb-2">Notre histoire</p>
+            <h2 class="section-title mb-5">10 ans au service de Lyon</h2>
+            <div style="font-size: 0.9375rem; color: #4b5563; line-height: 1.85; display: flex; flex-direction: column; gap: 1rem;">
+              <p>ProSec Serrurerie a été fondée en 2012 par <strong>Julien Marchand</strong>, serrurier de métier depuis 2005. Après avoir travaillé plusieurs années dans une grande enseigne nationale, Julien décide de créer sa propre structure pour proposer un service plus humain, plus réactif et plus transparent.</p>
+              <p>En dix ans, ProSec est devenu l'un des serruriers de référence du Grand Lyon, avec une équipe de <strong>8 techniciens formés</strong> et certifiés, capables d'intervenir dans tout le département du Rhône.</p>
+              <p>Notre philosophie est simple : <strong>prix fixe avant intervention, qualité garantie, zéro mauvaise surprise</strong>. C'est ce qui nous a permis d'obtenir une note de 4.9/5 sur Google avec plus de 127 avis.</p>
+            </div>
+          </div>
+          <!-- Stats -->
+          <div class="grid grid-cols-2 gap-5">
+            {[
+              { n: "2012", label: "Année de création", sub: "Plus de 10 ans d'expertise" },
+              { n: "+1000", label: "Interventions/an", sub: "Sur Lyon et le Rhône" },
+              { n: "8", label: "Techniciens formés", sub: "Certifiés et agréés" },
+              { n: "4.9★", label: "Note Google", sub: "127 avis vérifiés" },
+            ].map((stat) => (
+              <div
+                style="background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(0,102,255,0.06)); border: 1px solid rgba(0,229,255,0.15); border-radius: 1.25rem; padding: 1.5rem; text-align: center;"
+              >
+                <p style="font-size: 1.75rem; font-weight: 900; color: #0a0f1e; line-height: 1; margin-bottom: 0.5rem;">{stat.n}</p>
+                <p style="font-size: 0.875rem; font-weight: 700; color: #0a0f1e; margin-bottom: 0.25rem;">{stat.label}</p>
+                <p style="font-size: 0.75rem; color: #9ca3af;">{stat.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nos valeurs -->
+    <section style="background: #f8fafc; padding: 5rem 0;">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <p class="section-label mb-2">Ce qui nous distingue</p>
+          <h2 class="section-title">Nos engagements</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: "🏅",
+              title: "Agréé assurance habitation",
+              desc: "Tous nos serruriers sont agréés par les principales compagnies d'assurance habitation. Nous fournissons tous les justificatifs pour votre remboursement.",
+            },
+            {
+              icon: "💰",
+              title: "Devis avant intervention",
+              desc: "Nous donnons toujours un prix ferme avant d'intervenir. Pas de mauvaise surprise sur la facture finale. Transparence totale.",
+            },
+            {
+              icon: "⚡",
+              title: "Intervention en −30 min",
+              desc: "Notre réseau de techniciens sur tout le Grand Lyon nous permet d'intervenir en moins de 30 minutes, 24h/24 et 7j/7.",
+            },
+            {
+              icon: "📜",
+              title: "Matériel certifié A2P",
+              desc: "Nous n'installons que des serrures certifiées A2P, reconnues par les assureurs et conformes aux normes françaises en vigueur.",
+            },
+            {
+              icon: "🛡️",
+              title: "Travail garanti 2 ans",
+              desc: "Toutes nos interventions sont garanties 2 ans pièces et main d'œuvre. Si un problème survient, nous revenons sans frais supplémentaires.",
+            },
+            {
+              icon: "⭐",
+              title: "4.9/5 sur Google",
+              desc: "Plus de 127 avis vérifiés sur Google avec une note de 4.9/5. Nos clients sont nos meilleurs ambassadeurs.",
+            },
+          ].map((val) => (
+            <div class="card-white" style="padding: 2rem; border: 1px solid #f1f5f9; text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 1rem;">{val.icon}</div>
+              <h3 style="font-size: 1.0625rem; font-weight: 700; color: #0a0f1e; margin-bottom: 0.75rem;">{val.title}</h3>
+              <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.65;">{val.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section style="background: #ffffff; padding: 4rem 0;">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="section-label mb-3">Reconnus et certifiés</p>
+        <h2 class="section-title mb-10">Nos certifications et agréments</h2>
+        <div class="flex flex-wrap justify-center gap-4">
+          {[
+            "Agrément A2P",
+            "Norme NF P 25-311",
+            "Certification BP2",
+            "Certification BP3",
+            "Agréé AXA Assurance",
+            "Agréé MAIF",
+            "Agréé Groupama",
+            "FFSU Member",
+          ].map((cert) => (
+            <div
+              style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1rem 1.5rem; font-size: 0.9375rem; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 0.5rem;"
+            >
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              {cert}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <UrgenceBanner />
+
+  </main>
+  <Footer />
+  <StickyMobileCTA />
+</BaseLayout>

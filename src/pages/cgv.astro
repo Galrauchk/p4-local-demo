@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Conditions Générales de Vente"
+  description="Conditions générales de vente de ProSec Serrurerie Lyon. Tarifs, modalités d'intervention, garanties et remboursements."
+  noIndex={true}
+>
+  <TopBar />
+  <Header />
+  <main style="background: #f8fafc; min-height: 80vh;">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+      <h1 style="font-size: 2.25rem; font-weight: 900; color: #0a0f1e; margin-bottom: 0.75rem;">Conditions Générales de Vente</h1>
+      <p style="color: #6b7280; margin-bottom: 3rem; font-size: 0.875rem;">En vigueur au 1er janvier 2024</p>
+
+      <div style="display: flex; flex-direction: column; gap: 2.5rem; font-size: 0.9375rem; color: #374151; line-height: 1.8;">
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 1 — Objet</h2>
+          <p>Les présentes conditions générales de vente régissent les relations contractuelles entre ProSec Serrurerie (ci-après "le Prestataire") et ses clients (ci-après "le Client") pour toutes les prestations de serrurerie réalisées par le Prestataire à Lyon et dans le Grand Lyon.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 2 — Devis et tarifs</h2>
+          <p>Tout devis est établi gratuitement, avant l'intervention, soit par téléphone, soit sur place. Le Client doit valider le devis avant le début des travaux. Les tarifs indiqués sont TTC et comprennent la main-d'œuvre et les déplacements au sein de la zone d'intervention.</p>
+          <p style="margin-top: 0.75rem;"><strong>Tarifs indicatifs 2024 :</strong></p>
+          <ul style="margin: 0.75rem 0 0 1.5rem; list-style-type: disc; display: flex; flex-direction: column; gap: 0.375rem;">
+            <li>Ouverture de porte (serrure standard) : à partir de 69€ TTC</li>
+            <li>Ouverture de porte (serrure multipoints) : à partir de 89€ TTC</li>
+            <li>Remplacement de cylindre A2P : à partir de 89€ TTC</li>
+            <li>Remplacement serrure multipoints : à partir de 149€ TTC</li>
+            <li>Vitrage urgence (jusqu'à 1m²) : à partir de 79€ TTC</li>
+            <li>Blindage de porte : sur devis, à partir de 800€ TTC</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 3 — Modalités d'intervention</h2>
+          <p>Le Prestataire s'engage à intervenir dans les délais annoncés (généralement −30 minutes). Ce délai est indicatif et peut varier selon les conditions de circulation. Aucun supplément n'est appliqué pour les interventions nocturnes, les week-ends ou les jours fériés.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 4 — Identification du Client</h2>
+          <p>Pour des raisons de sécurité, le Prestataire peut exiger la présentation d'une pièce d'identité et d'un justificatif de domicile avant toute intervention. En cas de refus de présentation, le Prestataire se réserve le droit de refuser l'intervention.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 5 — Modalités de paiement</h2>
+          <p>Le règlement s'effectue à la fin de l'intervention, après vérification du bon fonctionnement. Les moyens de paiement acceptés sont : espèces, carte bancaire (CB), virement bancaire. Les chèques ne sont pas acceptés.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 6 — Garanties</h2>
+          <p>Toutes les pièces installées sont garanties 2 ans. La main-d'œuvre est garantie 6 mois. En cas de défaillance dans ce délai, le Prestataire revient sans frais supplémentaires pour corriger le problème.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 7 — Remboursement assurance</h2>
+          <p>Pour les interventions couvertes par une assurance habitation, le Prestataire fournit une facture détaillée et, si nécessaire, un rapport d'intervention. Le remboursement par l'assurance dépend des conditions du contrat du Client et relève de sa responsabilité.</p>
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">Article 8 — Droit applicable</h2>
+          <p>Les présentes CGV sont soumises au droit français. En cas de litige, une solution amiable sera recherchée en priorité. À défaut, le Tribunal de Commerce de Lyon sera compétent.</p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(0,102,255,0.06)); border: 1px solid rgba(0,229,255,0.2); border-radius: 1rem; padding: 1.5rem;">
+          <p style="font-weight: 700; color: #0a0f1e; margin-bottom: 0.5rem;">Une question sur nos conditions ?</p>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">Contactez-nous par email ou par téléphone.</p>
+          <a href="mailto:contact@prosec-serrurerie.fr" style="font-size: 0.9375rem; font-weight: 600; color: #0066ff; text-decoration: underline; text-underline-offset: 3px;">
+            contact@prosec-serrurerie.fr
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

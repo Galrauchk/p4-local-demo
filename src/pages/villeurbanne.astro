@@ -1,0 +1,46 @@
+---
+import CityPageTemplate from "../components/CityPageTemplate.astro";
+---
+
+<CityPageTemplate
+  city="Villeurbanne"
+  postal="69100"
+  title="Serrurier Villeurbanne | ProSec — Urgence 24h"
+  description="Serrurier agréé à Villeurbanne — ProSec intervient en moins de 25 minutes. Ouverture de porte, blindage, remplacement serrure. Devis gratuit 24h/7j."
+  lat={45.7716}
+  lng={4.8800}
+  time="25 min"
+  hero_sub="Serrurier disponible 24h/7j à Villeurbanne. Ouverture de porte, remplacement serrure, blindage — intervention garantie en moins de 25 minutes. Agréé assurance habitation."
+  intro="<p>Villeurbanne, avec ses près de 150 000 habitants, est la commune la plus peuplée du Rhône après Lyon. ProSec Serrurerie y intervient quotidiennement pour répondre aux urgences serrurerie des habitants de Cusset, des Gratte-Ciel, du Nouveau Villeurbanne ou encore de la Doua.</p><p style='margin-top:1rem;'>Notre connaissance du terrain nous permet d'être présents <strong>en moins de 25 minutes</strong> dans tous les quartiers de Villeurbanne, y compris les nuits et week-ends. Que vous soyez étudiant bloqué devant votre studio près de la Doua, propriétaire souhaitant renforcer la sécurité de son appartement aux Gratte-Ciel, ou gérant d'un local commercial à Cusset, <strong>ProSec a la solution adaptée</strong>.</p>"
+  quartiers={[
+    "Gratte-Ciel", "Cusset", "Charpennes", "Nouveau Villeurbanne",
+    "La Doua", "Tonkin", "Buers", "Saint-Jean", "Croix-Luizet",
+    "République", "Ferrandière",
+  ]}
+  services_dispo={[
+    "Ouverture de porte urgence",
+    "Remplacement de serrure A2P",
+    "Blindage de porte",
+    "Contrôle d'accès & digicodes",
+    "Vitrage d'urgence",
+    "Coffre-fort",
+  ]}
+  faqs={[
+    {
+      q: "Combien coûte un serrurier à Villeurbanne ?",
+      a: "Nos tarifs à Villeurbanne sont identiques à ceux de Lyon : dès 69€ pour une ouverture de porte. Aucun supplément géographique, aucun frais de déplacement."
+    },
+    {
+      q: "Intervenez-vous dans les résidences étudiantes de Villeurbanne ?",
+      a: "Oui, nous intervenons régulièrement dans les résidences proches de la Doua et de l'INSA Lyon. Nous vous demandons simplement de présenter une pièce d'identité avant l'intervention."
+    },
+    {
+      q: "Puis-je obtenir un devis pour un blindage de porte à Villeurbanne ?",
+      a: "Absolument. Nous proposons des visites techniques gratuites à Villeurbanne pour évaluer votre porte et vous présenter les options de blindage les mieux adaptées."
+    },
+    {
+      q: "Quel est votre délai d'intervention à Villeurbanne la nuit ?",
+      a: "Nous garantissons une intervention en moins de 25 minutes à Villeurbanne, de jour comme de nuit, sans supplément horaire."
+    },
+  ]}
+/>

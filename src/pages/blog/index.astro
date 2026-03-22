@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TopBar from "../../components/TopBar.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import StickyMobileCTA from "../../components/StickyMobileCTA.astro";
+
+const articles = [
+  {
+    slug: "que-faire-porte-claquee-lyon",
+    cat: "Guide urgence",
+    catColor: "#00e5ff",
+    title: "Porte claquée à Lyon : que faire en urgence ?",
+    excerpt: "Vous êtes bloqué devant votre porte à Lyon ? Voici les étapes à suivre pour intervenir rapidement et éviter les arnaques aux serruriers.",
+    date: "15 mars 2024",
+    readTime: "4 min",
+    icon: "🔑",
+    tags: ["Lyon", "Urgence", "Conseils"],
+  },
+  {
+    slug: "bien-choisir-serrure-appartement-lyon",
+    cat: "Conseils sécurité",
+    catColor: "#10b981",
+    title: "Comment choisir sa serrure pour un appartement à Lyon ?",
+    excerpt: "Serrure A2P, multipoints, connectée — guide complet pour choisir la serrure adaptée à votre logement lyonnais et à votre assurance habitation.",
+    date: "8 mars 2024",
+    readTime: "6 min",
+    icon: "🛡️",
+    tags: ["Lyon", "A2P", "Sécurité"],
+  },
+  {
+    slug: "blindage-porte-obligatoire-assurance-lyon",
+    cat: "Assurance & sécurité",
+    catColor: "#0066ff",
+    title: "Blindage de porte : est-il obligatoire pour votre assurance ?",
+    excerpt: "Certaines assurances exigent un blindage de porte pour couvrir les cambriolages. Découvrez ce que dit votre contrat et comment être conforme.",
+    date: "1 mars 2024",
+    readTime: "5 min",
+    icon: "📋",
+    tags: ["Assurance", "Blindage", "Lyon"],
+  },
+  {
+    slug: "prix-serrurier-lyon-guide-complet",
+    cat: "Guide tarifs",
+    catColor: "#f59e0b",
+    title: "Prix d'un serrurier à Lyon : guide complet 2024",
+    excerpt: "Combien coûte réellement un serrurier à Lyon ? Ouverture de porte, remplacement serrure, blindage — tous les tarifs expliqués et décryptés.",
+    date: "22 février 2024",
+    readTime: "7 min",
+    icon: "💰",
+    tags: ["Prix", "Lyon", "Guide"],
+  },
+  {
+    slug: "eviter-arnaques-serrurier-lyon",
+    cat: "Conseils",
+    catColor: "#ef4444",
+    title: "Comment éviter les arnaques aux serruriers à Lyon ?",
+    excerpt: "Tarifs abusifs, faux urgentistes, devis fantaisistes — apprenez à reconnaître un vrai serrurier agréé à Lyon et à vous protéger.",
+    date: "14 février 2024",
+    readTime: "5 min",
+    icon: "⚠️",
+    tags: ["Sécurité", "Arnaque", "Lyon"],
+  },
+  {
+    slug: "securiser-appartement-villeurbanne",
+    cat: "Sécurité locale",
+    catColor: "#10b981",
+    title: "Comment sécuriser son appartement à Villeurbanne ?",
+    excerpt: "Guide pratique pour renforcer la sécurité de votre logement à Villeurbanne : serrures, blindages, conseils de notre serrurier local.",
+    date: "5 février 2024",
+    readTime: "6 min",
+    icon: "🏠",
+    tags: ["Villeurbanne", "Sécurité", "Appartement"],
+  },
+];
+---
+
+<BaseLayout
+  title="Blog Serrurerie Lyon"
+  description="Conseils serrurerie, guides sécurité et actualités locales pour Lyon et le Grand Lyon. Tous les conseils de ProSec pour sécuriser votre logement."
+>
+  <TopBar />
+  <Header />
+  <main>
+
+    <!-- Hero blog -->
+    <section style="background: linear-gradient(135deg, #0a0f1e, #141c35); padding: 4rem 0;">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="section-label mb-3">Expertise & Conseils</p>
+        <h1 style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #ffffff; margin-bottom: 1rem;">
+          Blog Serrurerie Lyon
+        </h1>
+        <p style="font-size: 1.125rem; color: rgba(255,255,255,0.65); max-width: 36rem; margin: 0 auto;">
+          Guides pratiques, conseils de sécurité et actualités serrurerie pour les habitants de Lyon et du Grand Lyon.
+        </p>
+      </div>
+    </section>
+
+    <!-- Articles grid -->
+    <section style="background: #f8fafc; padding: 4rem 0;">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((art) => (
+            <a
+              href={`/blog/${art.slug}`}
+              class="card-white group"
+              style="text-decoration: none; display: flex; flex-direction: column; border: 1px solid #f1f5f9; border-radius: 1.25rem; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;"
+              onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 16px 48px -8px rgba(0,0,0,0.12)';"
+              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='';"
+            >
+              <!-- Image zone -->
+              <div
+                style={`height: 180px; background: linear-gradient(135deg, ${art.catColor}12, ${art.catColor}28); display: flex; align-items: center; justify-content: center; position: relative;`}
+              >
+                <span style="font-size: 4rem;">{art.icon}</span>
+                <div
+                  style={`position: absolute; top: 1rem; left: 1rem; background: ${art.catColor}20; border: 1px solid ${art.catColor}40; color: ${art.catColor}; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px;`}
+                >
+                  {art.cat}
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h2 style="font-size: 1.0625rem; font-weight: 700; color: #0a0f1e; line-height: 1.4;">
+                  {art.title}
+                </h2>
+                <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.65; flex: 1;">
+                  {art.excerpt}
+                </p>
+
+                <!-- Tags -->
+                <div style="display: flex; flex-wrap: wrap; gap: 0.375rem;">
+                  {art.tags.map((tag) => (
+                    <span style="font-size: 0.75rem; background: #f1f5f9; color: #6b7280; padding: 0.2rem 0.5rem; border-radius: 9999px;">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div class="flex items-center justify-between" style="padding-top: 0.75rem; border-top: 1px solid #f1f5f9;">
+                  <span style="font-size: 0.8125rem; color: #9ca3af;">{art.date}</span>
+                  <span style="font-size: 0.8125rem; color: #9ca3af; display: flex; align-items: center; gap: 0.25rem;">
+                    ⏱ {art.readTime}
+                  </span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA bas de blog -->
+    <section style="background: #ffffff; padding: 4rem 0;">
+      <div class="max-w-2xl mx-auto px-4 text-center">
+        <h2 class="section-title mb-4">Besoin d'un serrurier maintenant ?</h2>
+        <p class="section-sub mx-auto mb-8">
+          Nos conseils c'est bien, notre intervention c'est mieux. Appelez ProSec pour une urgence 24h/7j.
+        </p>
+        <a href="tel:0478001122" class="btn-cta" style="font-size: 1.0625rem; padding: 1rem 2.5rem; display: inline-flex;">
+          📞 04 78 00 11 22 — Disponible maintenant
+        </a>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+  <StickyMobileCTA />
+</BaseLayout>
