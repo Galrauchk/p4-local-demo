@@ -1,5 +1,11 @@
 ---
 import "../styles/global.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/800.css";
+import "@fontsource/inter/900.css";
 
 export interface Props {
   title: string;
@@ -7,6 +13,7 @@ export interface Props {
   city?: string;
   noIndex?: boolean;
   schema?: object;
+  canonical?: string;
 }
 
 const {
@@ -14,7 +21,11 @@ const {
   description = "ProSec Serrurerie — Serrurier agréé assurance à Lyon. Intervention rapide 24h/7j, moins de 30 minutes. Ouverture de porte, blindage, remplacement serrure.",
   noIndex = false,
   schema,
+  canonical,
 } = Astro.props;
+
+const siteUrl = "https://p4-local-demo.netlify.app";
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
@@ -23,6 +34,7 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
     {noIndex && <meta name="robots" content="noindex,nofollow" />}
 
     <!-- OG -->
@@ -34,11 +46,6 @@ const {
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <!-- Schema.org LocalBusiness -->
     <script type="application/ld+json" set:html={JSON.stringify({
