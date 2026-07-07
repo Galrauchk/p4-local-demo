@@ -10,11 +10,19 @@ import UrgenceBanner from "../components/UrgenceBanner.astro";
 import BlogPreview from "../components/BlogPreview.astro";
 import Footer from "../components/Footer.astro";
 import StickyMobileCTA from "../components/StickyMobileCTA.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ProSec Serrurerie",
+  "url": "https://p4-local-demo.netlify.app"
+};
 ---
 
 <BaseLayout
   title="Serrurier agréé assurance à Lyon"
   description="ProSec Serrurerie — Serrurier agréé assurance à Lyon. Intervention rapide en moins de 30 min, 24h/7j. Ouverture de porte, blindage, remplacement serrure."
+  schema={schema}
 >
   <TopBar />
   <Header currentPage="/" />

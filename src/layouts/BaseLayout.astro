@@ -6,12 +6,14 @@ export interface Props {
   description?: string;
   city?: string;
   noIndex?: boolean;
+  schema?: object;
 }
 
 const {
   title,
   description = "ProSec Serrurerie — Serrurier agréé assurance à Lyon. Intervention rapide 24h/7j, moins de 30 minutes. Ouverture de porte, blindage, remplacement serrure.",
   noIndex = false,
+  schema,
 } = Astro.props;
 ---
 
@@ -70,6 +72,8 @@ const {
         "reviewCount": "127"
       }
     })} />
+
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     <title>{title} | ProSec Serrurerie Lyon</title>
   </head>
