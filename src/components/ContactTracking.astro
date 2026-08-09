@@ -1,0 +1,269 @@
+---
+/**
+ * ContactTracking.astro - mesure first-party des contacts et de leur source d'acquisition.
+ *
+ * POURQUOI CE FICHIER EXISTE DANS UN TEMPLATE
+ * -------------------------------------------
+ * Constate le 08/08/2026 : les 12 templates de demarrage ne contenaient AUCUNE mesure.
+ * Tout site cree a partir d'un template naissait donc aveugle, et la donnee de contact
+ * non collectee ne se rattrape jamais. Poser la mesure ici, c'est la poser une fois pour
+ * tous les sites a venir.
+ *
+ * Inclus UNE SEULE FOIS dans le layout racine : le tracking est donc actif sur 100 % des
+ * pages. C'est ce qui evite le piege du "code present dans le depot mais absent des pages
+ * servies" - un composant pose au cas par cas finit toujours par manquer sur une page.
+ *
+ * LE NOM DU SITE N'EST PAS ECRIT EN DUR, ET C'EST DELIBERE
+ * --------------------------------------------------------
+ * Il est derive de `site` dans astro.config.mjs. Sur les sites existants, cette valeur
+ * est une constante copiee a la main : un site cree par copie d'un autre envoie alors ses
+ * evenements sous le nom du site d'origine, et la mesure atterrit chez le mauvais client
+ * sans que rien n'echoue. En la derivant du build, l'erreur devient impossible.
+ *
+ * Si `site` est absent, le build ECHOUE ici plutot que de publier une mesure anonyme ou
+ * fausse. Une sonde qui se tait n'est pas une sonde qui va bien.
+ *
+ * Un unique ecouteur delegue capte les CTA reels du site :
+ *   - lien tel:                    -> call_click
+ *   - lien mailto: (hors legal)    -> email_click
+ *   - lien WhatsApp                -> whatsapp_click
+ *   - lien rel="sponsored"         -> outbound_click (libelle = hote partenaire)
+ *   - lien reseau social           -> social_click   (libelle = reseau)
+ *   - lien interne vers le tunnel  -> cta_click      (libelle = destination)
+ * Les evenements sans lien (fin de simulateur, etc.) passent par window.wtTrack(type, label).
+ * La soumission de formulaire n'est PAS tracee ici : elle doit l'etre cote serveur, apres
+ * envoi reussi, pour rester une source unique sans double comptage.
+ *
+ * CONSENTEMENT (RGPD / ePrivacy) - deux etages distincts :
+ *   1. Le COMPTAGE (site, type d'evenement, page) part TOUJOURS. Aucun cookie, aucune
+ *      ecriture sur le terminal, aucune donnee personnelle : il releve de l'exemption CNIL
+ *      de mesure d'audience (statistiques anonymes, first-party, non partagees).
+ *   2. L'ATTRIBUTION (utm_*, gclid, fbclid, referrer, page d'atterrissage) n'est capturee,
+ *      memorisee NI transmise sans consentement analytique explicite. Elle suppose une
+ *      ecriture en sessionStorage, donc un accord.
+ *
+ * TANT QUE CE TEMPLATE N'A PAS DE BANDEAU DE CONSENTEMENT, seul l'etage 1 fonctionne :
+ * le comptage remonte, l'attribution reste vide. C'est la degradation voulue, pas une
+ * panne. Poser @galrauchk/consent active le second etage sans toucher a ce fichier.
+ *
+ * PERFORMANCE : envoi en sendBeacon fire-and-forget, en text/plain pour eviter tout
+ * preflight CORS. Aucun echec de mesure ne peut bloquer ni ralentir la navigation.
+ */
+
+if (!Astro.site) {
+  throw new Error(
+    "ContactTracking : `site` n'est pas defini dans astro.config.mjs.\n" +
+      "Sans lui, les evenements de contact partiraient sans nom de site, ou pire, sous " +
+      "celui d'un autre site. Definis `site` avec le domaine reel avant de builder.",
+  );
+}
+
+// Hote reel du site, sans `www.` : c'est la cle qui identifie le site cote CRM.
+const SITE = new URL(Astro.site).hostname.replace(/^www\./, "");
+
+// Prefixes internes qui constituent le tunnel de contact/conversion de CE site.
+const CTA_PREFIXES = ["/contact"];
+
+// Pages ou le tracking de contact est neutralise : elles portent l'e-mail et le telephone
+// de l'editeur, un clic n'y est pas une intention commerciale.
+const LEGAL_PREFIXES = ["/mentions-legales", "/cgv", "/cgu", "/politique-confidentialite"];
+---
+
+<script is:inline define:vars={{ SITE, CTA_PREFIXES, LEGAL_PREFIXES }}>
+  (function () {
+    if (window.__wtContactTracking) return;
+    window.__wtContactTracking = true;
+
+    var ENDPOINT = "https://dcpmdeppdfohrnzabsnf.supabase.co/functions/v1/site-contact-event";
+    var CONSENT_KEY = "wt_consent";
+    var ATTRIB_KEY = "wt_attrib";
+    var CONSENT_TTL_MS = 6 * 30 * 24 * 60 * 60 * 1000;
+
+    var SOCIAL_HOSTS = {
+      "instagram.com": "instagram",
+      "tiktok.com": "tiktok",
+      "facebook.com": "facebook",
+      "linkedin.com": "linkedin",
+      "pinterest.fr": "pinterest",
+      "pinterest.com": "pinterest",
+      "x.com": "x",
+      "twitter.com": "x",
+      "youtube.com": "youtube",
+    };
+
+    function isLegalPage() {
+      return LEGAL_PREFIXES.some(function (p) {
+        return location.pathname.indexOf(p) === 0;
+      });
+    }
+
+    // Consentement analytique : signal GPC prioritaire, choix stocke, expiration a 6 mois.
+    function hasAnalyticsConsent() {
+      try {
+        if (navigator.globalPrivacyControl) return false;
+        var raw = localStorage.getItem(CONSENT_KEY);
+        if (!raw) return false;
+        var stored = JSON.parse(raw);
+        if (!stored || typeof stored.timestamp !== "number") return false;
+        if (Date.now() - stored.timestamp > CONSENT_TTL_MS) return false;
+        return Boolean(stored.choices && stored.choices.analytics);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function clamp(v, n) {
+      return v ? v.slice(0, n) : undefined;
+    }
+
+    // Source d'acquisition lue sur l'URL COURANTE. Ne stocke rien par elle-meme.
+    function readSource() {
+      var out = {};
+      try {
+        var q = new URLSearchParams(location.search);
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (k) {
+          var v = clamp(q.get(k), 100);
+          if (v) out[k] = v;
+        });
+        var gclid = clamp(q.get("gclid"), 200);
+        if (gclid) out.gclid = gclid;
+        var fbclid = clamp(q.get("fbclid"), 200);
+        if (fbclid) out.fbclid = fbclid;
+        // Referrer reduit a son HOTE : jamais l'URL complete, une query string tierce
+        // pourrait contenir des donnees personnelles.
+        if (document.referrer) {
+          var host = new URL(document.referrer).hostname;
+          if (host && host !== location.hostname) out.referrer_host = host.slice(0, 120);
+        }
+        out.landing_path = location.pathname.slice(0, 200);
+      } catch (e) {
+        /* silencieux : la mesure ne doit jamais casser la page */
+      }
+      return out;
+    }
+
+    // Memorise la source a la PREMIERE page vue et la restitue au moment du contact : un
+    // visiteur arrive sur /?gclid=abc, navigue, puis appelle depuis /contact - c'est bien
+    // gclid=abc qui doit etre associe a l'appel.
+    function attribution() {
+      if (!hasAnalyticsConsent()) return null;
+      try {
+        var kept = sessionStorage.getItem(ATTRIB_KEY);
+        if (kept) return JSON.parse(kept);
+        var src = readSource();
+        sessionStorage.setItem(ATTRIB_KEY, JSON.stringify(src));
+        return src;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Envoi fire-and-forget. Ne bloque jamais, n'echoue jamais visiblement.
+    function send(type, label) {
+      try {
+        var payload = { site: SITE, type: type, page: location.pathname };
+        if (label) payload.label = String(label).slice(0, 80);
+        var src = attribution();
+        if (src) Object.assign(payload, src);
+        var body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          // text/plain = requete simple : aucun preflight CORS, aucune latence ajoutee.
+          navigator.sendBeacon(ENDPOINT, new Blob([body], { type: "text/plain" }));
+        } else {
+          fetch(ENDPOINT, {
+            method: "POST",
+            body: body,
+            headers: { "Content-Type": "text/plain" },
+            keepalive: true,
+            mode: "no-cors",
+          }).catch(function () {});
+        }
+      } catch (e) {
+        /* silencieux */
+      }
+      // Relais GTM/GA4 : le conteneur ne traite l'evenement qu'une fois l'analytique consentie.
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: "contact", contact_type: type, contact_label: label });
+      } catch (e) {
+        /* silencieux */
+      }
+    }
+
+    // API publique : evenements sans lien (fin de simulateur, formulaire pilote en JS).
+    window.wtTrack = send;
+    // Source d'acquisition du visiteur, null sans consentement. Sert a attribuer les
+    // soumissions de formulaire, tracees cote SERVEUR : le serveur ne voit que l'en-tete
+    // `referer`, jamais l'URL d'arrivee ni les utm du visiteur.
+    window.wtSource = attribution;
+
+    attribution();
+
+    // Rattrapage juste apres un choix dans un bandeau de consentement : a cet instant le
+    // visiteur est encore sur sa page d'atterrissage, l'URL porte donc toujours ses utm.
+    // Sans lui, toute campagne payante serait perdue des la premiere navigation.
+    document.addEventListener(
+      "click",
+      function (e) {
+        var t = e.target;
+        if (t && t.closest && t.closest("#wt-consent-banner, #wt-consent-modal")) {
+          setTimeout(attribution, 0);
+        }
+      },
+      true,
+    );
+
+    // Ecouteur delegue unique : capte les CTA reels, sans balisage a poser page a page.
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var a = t && t.closest ? t.closest("a[href]") : null;
+      if (!a) return;
+      var href = a.getAttribute("href") || "";
+      if (!href || href === "#") return;
+
+      if (href.indexOf("tel:") === 0) {
+        send("call_click");
+        return;
+      }
+      if (href.indexOf("mailto:") === 0) {
+        // Les pages legales portent l'e-mail de l'editeur : pas un contact commercial.
+        if (!isLegalPage()) send("email_click");
+        return;
+      }
+      if (href.indexOf("https://wa.me/") === 0 || href.indexOf("https://api.whatsapp.com/") === 0) {
+        send("whatsapp_click");
+        return;
+      }
+
+      if (/^https?:\/\//.test(href)) {
+        var host = "";
+        try {
+          host = new URL(href).hostname.replace(/^www\./, "");
+        } catch (err) {
+          return;
+        }
+        if (!host || host === location.hostname.replace(/^www\./, "")) return;
+
+        var network = Object.keys(SOCIAL_HOSTS).find(function (h) {
+          return host === h || host.indexOf("." + h) === host.length - h.length - 1;
+        });
+        if (network) {
+          send("social_click", SOCIAL_HOSTS[network]);
+          return;
+        }
+        var rel = (a.getAttribute("rel") || "").split(/\s+/);
+        if (rel.indexOf("sponsored") !== -1) send("outbound_click", host);
+        return;
+      }
+
+      // Lien interne vers le tunnel de contact : intention de contact.
+      if (
+        CTA_PREFIXES.some(function (p) {
+          return href === p || href.indexOf(p) === 0;
+        })
+      ) {
+        send("cta_click", href.split(/[?#]/)[0].slice(0, 80));
+      }
+    });
+  })();
+</script>
