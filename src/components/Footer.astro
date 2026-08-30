@@ -1,4 +1,6 @@
 ---
+import LegalLinks from "./LegalLinks.astro";
+
 const zones = [
   "Lyon 1er", "Lyon 2ème", "Lyon 3ème",
   "Lyon 4ème", "Lyon 5ème", "Lyon 6ème",
@@ -57,7 +59,7 @@ const horaires = [
             </svg>
             04 78 00 11 22
           </a>
-          <a href="mailto:contact@prosec-serrurerie.fr" style="font-size: 0.875rem; color: rgba(255,255,255,0.55); transition: color 0.15s;">
+          <a href="/contact" style="font-size: 0.875rem; color: rgba(255,255,255,0.55); transition: color 0.15s;">
             contact@prosec-serrurerie.fr
           </a>
           <span style="font-size: 0.875rem; color: rgba(255,255,255,0.55);">Lyon, 69000</span>
@@ -151,6 +153,7 @@ const horaires = [
           À propos
         </a>
       </div>
+      <LegalLinks includeMentions={false} />
     </div>
   </div>
 </footer>

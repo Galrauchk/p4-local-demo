@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import TopBar from "../components/TopBar.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import LegalLinks from "../components/LegalLinks.astro";
 ---
 
 <BaseLayout
@@ -64,6 +65,7 @@ import Footer from "../components/Footer.astro";
           <h2 style="font-size: 1.25rem; font-weight: 800; color: #0a0f1e; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(0,229,255,0.3);">7. Responsabilité</h2>
           <p>ProSec Serrurerie s'efforce de maintenir les informations de ce site à jour. Cependant, nous ne garantissons pas l'exactitude complète des informations publiées et déclinons toute responsabilité pour les erreurs éventuelles.</p>
         </div>
+        <LegalLinks includeMentions={false} />
       </div>
     </div>
   </main>

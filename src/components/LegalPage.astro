@@ -1,0 +1,270 @@
+---
+interface Props {
+  kind: 'privacy' | 'cookies' | 'mentions';
+}
+
+const { kind } = Astro.props;
+---
+
+{kind === 'privacy' && (
+  <article class="wt-legal">
+    <header>
+      <p class="wt-legal__eyebrow">Protection des données</p>
+      <h1>Politique de confidentialité</h1>
+      <p>Dernière mise à jour : [DATE DE MISE À JOUR]</p>
+    </header>
+
+    <section>
+      <h2>1. Responsable du traitement</h2>
+      <p>
+        Le responsable du traitement est [NOM DE L'ENTREPRISE], [FORME JURIDIQUE], dont le siège social est situé
+        [ADRESSE], immatriculée sous le numéro [SIREN OU SIRET]. Le directeur de la publication est
+        [NOM DU RESPONSABLE DE PUBLICATION].
+      </p>
+      <p>Contact pour la protection des données : [ADRESSE E-MAIL] et [NUMÉRO DE TÉLÉPHONE].</p>
+    </section>
+
+    <section>
+      <h2>2. Données, finalités et bases légales</h2>
+      <ul>
+        <li>Demandes de contact : nom, coordonnées et contenu du message, afin de répondre à la demande et de préparer une éventuelle relation contractuelle.</li>
+        <li>Sécurité du formulaire : données techniques strictement nécessaires à la détection des envois automatisés.</li>
+        <li>Mesure d'audience : données de navigation collectées uniquement après consentement.</li>
+        <li>Comptage anonyme des contacts : type d'action et page concernée, sans cookie ni identifiant de visiteur.</li>
+      </ul>
+      <p>
+        Les demandes reposent sur l'exécution de mesures précontractuelles. La mesure d'audience repose sur le
+        consentement. La sécurité et le comptage anonyme reposent sur l'intérêt légitime à protéger et améliorer le site.
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Destinataires et sous-traitants</h2>
+      <ul>
+        <li>Netlify : hébergement et diffusion du site.</li>
+        <li>Cloudflare Turnstile : protection anti-robot des formulaires.</li>
+        <li>Google Tag Manager, Google Analytics 4 et Microsoft Clarity : mesure d'audience uniquement après consentement.</li>
+        <li>Brevo : acheminement et suivi des demandes reçues.</li>
+        <li>Supabase : comptage anonyme des événements de contact, sans cookie ni identifiant de visiteur.</li>
+      </ul>
+      <p>Les données ne sont ni vendues ni louées.</p>
+    </section>
+
+    <section>
+      <h2>4. Transferts hors de l'Union européenne</h2>
+      <p>
+        Certains prestataires peuvent traiter des données hors de l'Union européenne. Ces transferts sont encadrés par
+        les mécanismes prévus par le RGPD, notamment les décisions d'adéquation ou les clauses contractuelles types.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Durées de conservation</h2>
+      <ul>
+        <li>Demandes de contact et données de prospects : 3 ans à compter du dernier échange.</li>
+        <li>Données nécessaires à une relation contractuelle : pendant la relation, puis selon les délais légaux applicables.</li>
+        <li>Choix de consentement : 6 mois.</li>
+        <li>Données de mesure d'audience : 13 mois maximum, selon le paramétrage des outils.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Vos droits</h2>
+      <p>
+        Vous disposez des droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité.
+        Vous pouvez retirer votre consentement à tout moment. Pour exercer vos droits, contactez [ADRESSE E-MAIL].
+      </p>
+      <p>
+        Vous pouvez aussi saisir la Commission nationale de l'informatique et des libertés :
+        <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Cookies et préférences</h2>
+      <p>
+        Consultez la <a href="/politique-cookies">politique de cookies</a> ou
+        <button type="button" class="wt-legal__link-button" onclick="window.openConsentSettings && window.openConsentSettings()">modifiez vos préférences</button>.
+      </p>
+    </section>
+  </article>
+)}
+
+{kind === 'cookies' && (
+  <article class="wt-legal">
+    <header>
+      <p class="wt-legal__eyebrow">Gestion des traceurs</p>
+      <h1>Politique de cookies</h1>
+      <p>Dernière mise à jour : [DATE DE MISE À JOUR]</p>
+    </header>
+
+    <section>
+      <h2>1. Qu'est-ce qu'un cookie</h2>
+      <p>
+        Un cookie est une information enregistrée sur votre appareil. Le site utilise un stockage local essentiel pour
+        mémoriser votre choix et peut utiliser des traceurs de mesure d'audience uniquement après votre accord.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Services essentiels</h2>
+      <ul>
+        <li>Mémorisation du choix de consentement pendant 6 mois.</li>
+        <li>Cloudflare Turnstile pour protéger les formulaires contre les envois automatisés.</li>
+        <li>Fonctions nécessaires à la sécurité et au fonctionnement du site.</li>
+      </ul>
+      <p>Ces services ne sont pas utilisés à des fins publicitaires.</p>
+    </section>
+
+    <section>
+      <h2>3. Mesure d'audience soumise au consentement</h2>
+      <p>
+        Google Tag Manager n'est chargé qu'après votre accord. Il peut alors activer Google Analytics 4 et Microsoft
+        Clarity selon la configuration du site. Sans accord, aucune requête vers ces outils n'est déclenchée.
+      </p>
+      <p>
+        Le site peut aussi compter anonymement les envois de formulaire et les clics de contact dans Supabase, sans
+        cookie ni identifiant de visiteur.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Consent Mode v2 et Global Privacy Control</h2>
+      <p>
+        Les signaux Consent Mode v2 sont refusés par défaut. Le stockage analytique n'est accordé qu'après un choix
+        positif. Si votre navigateur active Global Privacy Control, le refus prévaut et les outils de mesure ne sont pas chargés.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Modifier votre choix</h2>
+      <p>
+        Vous pouvez accepter, refuser ou personnaliser votre choix. Le refus est aussi accessible que l'acceptation.
+      </p>
+      <button type="button" class="wt-legal__settings" onclick="window.openConsentSettings && window.openConsentSettings()">Gérer mes préférences</button>
+    </section>
+
+    <section>
+      <h2>6. En savoir plus</h2>
+      <p>
+        Consultez la <a href="/politique-confidentialite">politique de confidentialité</a> pour connaître les finalités,
+        les destinataires, les durées de conservation et vos droits.
+      </p>
+    </section>
+  </article>
+)}
+
+{kind === 'mentions' && (
+  <article class="wt-legal">
+    <header>
+      <p class="wt-legal__eyebrow">Informations obligatoires</p>
+      <h1>Mentions légales</h1>
+      <p>Dernière mise à jour : [DATE DE MISE À JOUR]</p>
+    </header>
+
+    <section>
+      <h2>1. Éditeur du site</h2>
+      <ul>
+        <li>Nom ou raison sociale : [NOM DE L'ENTREPRISE]</li>
+        <li>Forme juridique et capital social : [FORME JURIDIQUE ET CAPITAL SOCIAL]</li>
+        <li>Adresse : [ADRESSE]</li>
+        <li>SIREN ou SIRET : [SIREN OU SIRET]</li>
+        <li>RCS ou RM : [RCS OU RM]</li>
+        <li>Numéro de TVA : [NUMÉRO DE TVA]</li>
+        <li>Responsable de publication : [NOM DU RESPONSABLE DE PUBLICATION]</li>
+        <li>Téléphone : [NUMÉRO DE TÉLÉPHONE]</li>
+        <li>Adresse électronique : [ADRESSE E-MAIL]</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Hébergement</h2>
+      <p>Le site est hébergé par Netlify, Inc., 44 Montgomery Street, Suite 300, San Francisco, California 94104, États-Unis.</p>
+    </section>
+
+    <section>
+      <h2>3. Propriété intellectuelle</h2>
+      <p>
+        Les contenus, la structure et les éléments graphiques du site sont protégés. Toute reproduction non autorisée
+        est interdite, sauf disposition légale contraire.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Données personnelles et cookies</h2>
+      <p>
+        Consultez la <a href="/politique-confidentialite">politique de confidentialité</a> et la
+        <a href="/politique-cookies">politique de cookies</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Contact</h2>
+      <p>Pour toute question relative au site : [ADRESSE E-MAIL] ou [NUMÉRO DE TÉLÉPHONE].</p>
+    </section>
+  </article>
+)}
+
+<style>
+  .wt-legal {
+    width: min(100% - 2rem, 880px);
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 6rem) 0;
+    color: var(--text-primary, var(--color-text, #1e293b));
+    line-height: 1.75;
+  }
+  .wt-legal header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border, rgba(15, 23, 42, 0.16));
+  }
+  .wt-legal__eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary, var(--accent, #0369a1));
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .wt-legal h1 {
+    margin: 0 0 1rem;
+    color: inherit;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    line-height: 1.05;
+  }
+  .wt-legal h2 {
+    margin: 0 0 0.85rem;
+    color: inherit;
+    font-size: clamp(1.2rem, 3vw, 1.55rem);
+  }
+  .wt-legal section { margin-top: 2.25rem; }
+  .wt-legal p,
+  .wt-legal li { color: var(--text-secondary, var(--color-muted, #475569)); }
+  .wt-legal ul { padding-left: 1.25rem; }
+  .wt-legal a,
+  .wt-legal__link-button {
+    color: var(--primary, var(--accent, #0369a1));
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+  .wt-legal__link-button {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+  }
+  .wt-legal__settings {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    border: 2px solid currentColor;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--primary, var(--accent, #0369a1));
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
+

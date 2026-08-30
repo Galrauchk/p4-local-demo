@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalPage from '../components/LegalPage.astro';
+import TopBar from '../components/TopBar.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const kind = 'cookies' as const;
+---
+
+<BaseLayout title="Politique de cookies : [NOM DE L'ENTREPRISE]" description="Cookies, consentement, outils de mesure d'audience et gestion des préférences." noIndex={true}>
+  <TopBar />
+  <Header />
+  <main>
+    <LegalPage kind={kind} />
+  </main>
+  <Footer />
+</BaseLayout>
+
