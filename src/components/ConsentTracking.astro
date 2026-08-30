@@ -1,0 +1,50 @@
+---
+const rawGtmId = import.meta.env.PUBLIC_GTM_ID?.trim() ?? '';
+const gtmId = /^GTM-[A-Z0-9]+$/i.test(rawGtmId) && !rawGtmId.includes('[') ? rawGtmId : '';
+const consentTtlMs = 6 * 30 * 24 * 60 * 60 * 1000;
+---
+
+<script is:inline define:vars={{ GTM_ID: gtmId, CONSENT_TTL_MS: consentTtlMs }}>
+  (function () {
+    var STORAGE_KEY = 'wt_consent';
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+
+    window.gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'denied',
+      personalization_storage: 'denied',
+      security_storage: 'denied',
+      wait_for_update: 500
+    });
+
+    var gtmLoaded = false;
+    window.wtLoadGtm = function () {
+      if (gtmLoaded || !GTM_ID || navigator.globalPrivacyControl === true) return;
+      gtmLoaded = true;
+      window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(GTM_ID);
+      document.head.appendChild(script);
+    };
+
+    try {
+      if (navigator.globalPrivacyControl === true) return;
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var stored = raw ? JSON.parse(raw) : null;
+      var fresh = stored && typeof stored.timestamp === 'number'
+        && Date.now() - stored.timestamp <= CONSENT_TTL_MS;
+      if (fresh && stored.choices && stored.choices.analytics === true) {
+        window.gtag('consent', 'update', { analytics_storage: 'granted' });
+        window.wtLoadGtm();
+      }
+    } catch (error) {
+      // Le refus par defaut reste actif si le stockage local est indisponible.
+    }
+  })();
+</script>
+

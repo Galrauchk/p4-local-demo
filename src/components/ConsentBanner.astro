@@ -1,0 +1,251 @@
+---
+const consentTtlMs = 6 * 30 * 24 * 60 * 60 * 1000;
+---
+
+<div id="wt-consent-banner" class="wt-consent" role="dialog" aria-labelledby="wt-consent-title" aria-describedby="wt-consent-description" hidden>
+  <div class="wt-consent__copy">
+    <h2 id="wt-consent-title">Respect de votre vie privée</h2>
+    <p id="wt-consent-description">
+      Nous utilisons Google Tag Manager pour activer Google Analytics 4 et Microsoft Clarity uniquement après votre accord.
+      <a href="/politique-cookies">Consulter la politique de cookies</a>.
+    </p>
+  </div>
+  <div class="wt-consent__actions">
+    <button type="button" class="wt-consent__secondary" data-consent-action="customize">Personnaliser</button>
+    <button type="button" data-consent-action="refuse">Tout refuser</button>
+    <button type="button" data-consent-action="accept">Tout accepter</button>
+  </div>
+</div>
+
+<div id="wt-consent-modal" class="wt-consent-modal" role="dialog" aria-modal="true" aria-labelledby="wt-consent-modal-title" hidden>
+  <button type="button" class="wt-consent-modal__overlay" data-consent-action="close" aria-label="Fermer les paramètres"></button>
+  <div class="wt-consent-modal__panel">
+    <div class="wt-consent-modal__header">
+      <h2 id="wt-consent-modal-title">Paramètres des cookies</h2>
+      <button type="button" class="wt-consent-modal__close" data-consent-action="close" aria-label="Fermer">×</button>
+    </div>
+    <p>Les services essentiels restent disponibles. Les outils de mesure ne sont activés qu'avec votre accord.</p>
+    <div class="wt-consent-choice">
+      <div>
+        <h3>Services essentiels</h3>
+        <p>Sécurité du formulaire et mémorisation de votre choix. Toujours actifs.</p>
+      </div>
+      <input type="checkbox" checked disabled aria-label="Services essentiels toujours actifs" />
+    </div>
+    <div class="wt-consent-choice">
+      <div>
+        <h3>Mesure d'audience</h3>
+        <p>Google Analytics 4 et Microsoft Clarity, chargés via Google Tag Manager.</p>
+      </div>
+      <input id="wt-consent-analytics" type="checkbox" aria-label="Autoriser la mesure d'audience" />
+    </div>
+    <p id="wt-consent-gpc" class="wt-consent-modal__gpc" hidden>
+      Votre navigateur transmet le signal Global Privacy Control. La mesure d'audience reste refusée.
+    </p>
+    <button type="button" data-consent-action="save">Enregistrer mes choix</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ CONSENT_TTL_MS: consentTtlMs }}>
+  (function () {
+    var STORAGE_KEY = 'wt_consent';
+    var banner = document.getElementById('wt-consent-banner');
+    var modal = document.getElementById('wt-consent-modal');
+    var analytics = document.getElementById('wt-consent-analytics');
+    var gpcMessage = document.getElementById('wt-consent-gpc');
+    if (!banner || !modal || !analytics) return;
+
+    function readConsent() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        var stored = raw ? JSON.parse(raw) : null;
+        if (!stored || typeof stored.timestamp !== 'number') return null;
+        if (Date.now() - stored.timestamp > CONSENT_TTL_MS) return null;
+        return stored;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveConsent(granted) {
+      var allowed = granted === true && navigator.globalPrivacyControl !== true;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          choices: { analytics: allowed },
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        // Le choix reste applique pour la page courante si le stockage echoue.
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          analytics_storage: allowed ? 'granted' : 'denied'
+        });
+      }
+      if (allowed && typeof window.wtLoadGtm === 'function') window.wtLoadGtm();
+      return allowed;
+    }
+
+    function openModal() {
+      var gpc = navigator.globalPrivacyControl === true;
+      var stored = readConsent();
+      analytics.checked = !gpc && Boolean(stored && stored.choices && stored.choices.analytics);
+      analytics.disabled = gpc;
+      if (gpcMessage) gpcMessage.hidden = !gpc;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      var close = modal.querySelector('[data-consent-action="close"]');
+      if (close instanceof HTMLElement) close.focus();
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    function closeBanner() {
+      banner.hidden = true;
+    }
+
+    document.querySelectorAll('[data-consent-action]').forEach(function (control) {
+      control.addEventListener('click', function () {
+        var action = control.getAttribute('data-consent-action');
+        if (action === 'accept') {
+          saveConsent(true);
+          closeBanner();
+        } else if (action === 'refuse') {
+          saveConsent(false);
+          closeBanner();
+        } else if (action === 'customize') {
+          openModal();
+        } else if (action === 'save') {
+          saveConsent(analytics.checked);
+          closeModal();
+          closeBanner();
+        } else if (action === 'close') {
+          closeModal();
+        }
+      });
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    window.openConsentSettings = openModal;
+
+    if (navigator.globalPrivacyControl === true) {
+      saveConsent(false);
+    } else if (!readConsent()) {
+      banner.hidden = false;
+      banner.focus();
+    }
+  })();
+</script>
+
+<style>
+  .wt-consent,
+  .wt-consent-modal {
+    --wt-consent-bg: #0f172a;
+    --wt-consent-panel: #172033;
+    --wt-consent-text: #f8fafc;
+    --wt-consent-muted: #cbd5e1;
+    --wt-consent-accent: #38bdf8;
+    color: var(--wt-consent-text);
+    font: 0.9375rem/1.5 Inter, system-ui, sans-serif;
+  }
+  .wt-consent[hidden],
+  .wt-consent-modal[hidden] { display: none; }
+  .wt-consent {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem max(1rem, calc((100vw - 1200px) / 2));
+    background: var(--wt-consent-bg);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 -12px 32px rgba(15, 23, 42, 0.28);
+  }
+  .wt-consent__copy { max-width: 720px; }
+  .wt-consent h2,
+  .wt-consent-modal h2,
+  .wt-consent-modal h3 { margin: 0 0 0.35rem; color: var(--wt-consent-text); }
+  .wt-consent p,
+  .wt-consent-modal p { margin: 0; color: var(--wt-consent-muted); }
+  .wt-consent a { color: var(--wt-consent-accent); }
+  .wt-consent__actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .wt-consent button,
+  .wt-consent-modal button {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border: 2px solid var(--wt-consent-accent);
+    border-radius: 0.5rem;
+    background: var(--wt-consent-accent);
+    color: #082f49;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .wt-consent button:focus-visible,
+  .wt-consent-modal button:focus-visible,
+  .wt-consent input:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .wt-consent .wt-consent__secondary { background: transparent; color: var(--wt-consent-text); }
+  .wt-consent-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+  }
+  .wt-consent-modal__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: rgba(2, 6, 23, 0.78);
+  }
+  .wt-consent-modal__panel {
+    position: relative;
+    width: min(100%, 620px);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.75rem;
+    background: var(--wt-consent-panel);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  }
+  .wt-consent-modal__header,
+  .wt-consent-choice {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .wt-consent-modal__header { margin-bottom: 1rem; }
+  .wt-consent-modal .wt-consent-modal__close {
+    min-width: 44px;
+    padding: 0.25rem;
+    background: transparent;
+    color: var(--wt-consent-text);
+  }
+  .wt-consent-choice {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .wt-consent-choice input { width: 1.35rem; height: 1.35rem; accent-color: var(--wt-consent-accent); }
+  .wt-consent-modal__gpc { margin-bottom: 1rem !important; }
+  @media (max-width: 760px) {
+    .wt-consent { align-items: stretch; flex-direction: column; }
+    .wt-consent__actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .wt-consent__actions .wt-consent__secondary { grid-column: 1 / -1; }
+  }
+</style>
+

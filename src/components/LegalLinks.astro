@@ -1,0 +1,40 @@
+---
+interface Props {
+  includeMentions?: boolean;
+}
+
+const { includeMentions = true } = Astro.props;
+---
+
+<nav class="wt-legal-links" aria-label="Confidentialité et cookies">
+  {includeMentions && <a href="/mentions-legales">Mentions légales</a>}
+  <a href="/politique-confidentialite">Politique de confidentialité</a>
+  <a href="/politique-cookies">Politique de cookies</a>
+  <button type="button" onclick="window.openConsentSettings && window.openConsentSettings()">Gérer les cookies</button>
+</nav>
+
+<style>
+  .wt-legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1.25rem;
+    margin: 1rem 0;
+    font: inherit;
+  }
+  .wt-legal-links a,
+  .wt-legal-links button {
+    color: inherit;
+    font: inherit;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+  .wt-legal-links button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+</style>
+
