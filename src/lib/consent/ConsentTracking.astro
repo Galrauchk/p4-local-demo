@@ -1,0 +1,58 @@
+---
+import { buildGtmSnippet } from './gtm.mjs';
+import { STORAGE_KEY, CONSENT_TTL_MS } from './consent-core.mjs';
+const { gtmId } = Astro.props;
+const snippet = buildGtmSnippet(gtmId);
+---
+{gtmId && (
+  <script is:inline define:vars={{ snippet, STORAGE_KEY, CONSENT_TTL_MS }}>
+    // Consent Mode v2 : tout refuse par defaut. Cet appel ne declenche AUCUNE
+    // requete reseau (il ne fait qu'alimenter le dataLayer).
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('consent', 'default', {
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+      analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted',
+    });
+
+    // Blocage prealable strict : GTM n'est charge (et donc aucune requete
+    // Google emise) QU'APRES un consentement explicite. window.wtLoadGtm est
+    // appele soit ici (consentement deja stocke et valide), soit par le bandeau
+    // au clic "Accepter". Pas d'iframe noscript : elle se declencherait sans
+    // consentement pour les visiteurs sans JavaScript.
+    var gtmLoaded = false;
+    window.wtLoadGtm = function () {
+      if (gtmLoaded || !snippet) return;
+      gtmLoaded = true;
+      window.wtGtmLoaded = true;
+      var s = document.createElement('script');
+      s.text = snippet;
+      document.head.appendChild(s);
+    };
+
+    window.wtRevokeAnalytics = function () {
+      // Seuls les cookies de mesure connus et accessibles à ce domaine sont effacés.
+      var domains = location.hostname.split('.').map(function (_, index, parts) { return parts.slice(index).join('.'); });
+      document.cookie.split(';').forEach(function (cookie) {
+        var name = cookie.split('=')[0].trim();
+        if (!/^(_ga(?:_|$)|_gid$|_gat|_clck$|_clsk$)/.test(name)) return;
+        var expiration = name + '=; Max-Age=0; path=/';
+        document.cookie = expiration;
+        domains.forEach(function (domain) { document.cookie = expiration + '; domain=' + domain; document.cookie = expiration + '; domain=.' + domain; });
+      });
+    };
+
+    try {
+      var gpc = navigator.globalPrivacyControl === true;
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var stored = raw ? JSON.parse(raw) : null;
+      var fresh = stored && typeof stored.timestamp === 'number'
+        && stored.timestamp <= Date.now() && (Date.now() - stored.timestamp) <= CONSENT_TTL_MS;
+      if (!gpc && fresh && stored.choices && stored.choices.analytics === true) {
+        gtag('consent', 'update', { analytics_storage: 'granted' });
+        window.wtLoadGtm();
+      }
+    } catch (e) {}
+  </script>
+)}

@@ -1,0 +1,774 @@
+---
+/**
+ * ConsentBanner.astro - Bandeau cookies CNIL-max + modal par categories.
+ *
+ * Conformite CNIL :
+ *   - Affichage uniquement si l'etat est unknown (rien stocke ou expire > 6 mois)
+ *   - Refus aussi simple qu'acceptation (meme taille/poids visuel)
+ *   - Modification possible a tout moment via window.openConsentSettings()
+ *   - Expiration du choix : 6 mois
+ *   - Global Privacy Control respecte (pas de bandeau si GPC actif)
+ *   - Consent Mode v2 mis a jour via gtag('consent','update', ...)
+ *
+ * Props :
+ *   theme?  - Objet de surcharge des variables CSS (bg, color, accent, ...)
+ *             et police optionnelle (fontFamily ; par defaut le bandeau
+ *             herite de la police du site)
+ *   texts?  - Objet de surcharge des textes FR par defaut
+ *
+ * API globale exposee :
+ *   window.openConsentSettings() - Rouvre la modal (lien footer)
+ *
+ * Cle localStorage : wt_consent
+ * Format stocke   : { choices: { analytics: boolean }, timestamp: number }
+ */
+
+import { STORAGE_KEY, CONSENT_TTL_MS } from './consent-core.mjs';
+
+const { theme = {}, texts = {}, presentation = 'banner', analyticsEnabled = true } = Astro.props;
+const isPanel = presentation === 'panel';
+
+const t = {
+  title:          texts.title          ?? "Respect de votre vie privée",
+  description:    texts.description    ?? "Ce site utilise des cookies de mesure d'audience (Google Analytics) pour comprendre comment vous l'utilisez et l'améliorer. Vous pouvez accepter, refuser ou personnaliser votre choix.",
+  privacyLink:    texts.privacyLink    ?? null,
+  privacyLabel:   texts.privacyLabel   ?? "En savoir plus",
+  btnAccept:      texts.btnAccept      ?? "Tout accepter",
+  btnRefuse:      texts.btnRefuse      ?? "Tout refuser",
+  btnCustomize:   texts.btnCustomize   ?? "Personnaliser",
+  modalTitle:     texts.modalTitle     ?? "Paramètres des cookies",
+  modalIntro:     texts.modalIntro     ?? "Activez ou désactivez chaque catégorie de cookies. Vous pouvez modifier ce choix à tout moment depuis le pied de page.",
+  essentialTitle: texts.essentialTitle ?? "Cookies essentiels",
+  essentialDesc:  texts.essentialDesc  ?? "Nécessaires au fonctionnement du site (sécurité, session). Ne peuvent pas être désactivés.",
+  analyticsTitle: texts.analyticsTitle ?? "Cookies analytiques",
+  analyticsDesc:  texts.analyticsDesc  ?? "Mesurent la fréquentation et l’utilisation du site. Les outils utilisés et leurs durées de conservation sont précisés dans la politique de cookies.",
+  cookieLink:     texts.cookieLink ?? null,
+  cookieLabel:    texts.cookieLabel ?? "Politique de cookies",
+  closeLabel:     texts.closeLabel ?? "Fermer la fenêtre",
+  essentialAria:  texts.essentialAria ?? "Cookies essentiels (toujours activés)",
+  analyticsAria:  texts.analyticsAria ?? "Accepter les cookies analytiques",
+  alwaysActive:   texts.alwaysActive ?? "Toujours activé",
+  toggleLabel:    texts.toggleLabel ?? "Activer ou désactiver",
+  essentialNote:  texts.essentialNote ?? "Les cookies nécessaires restent actifs. Votre choix peut être modifié à tout moment.",
+  btnSave:        texts.btnSave        ?? "Enregistrer mes choix",
+};
+
+/* Variables CSS injectees en style inline - surchargent les defauts de <style> */
+const themeVars = [
+  `--cb-bg:${theme.bg ?? '#0a0f1e'}`,
+  `--cb-color:${theme.color ?? '#f5f7fa'}`,
+  `--cb-color-muted:${theme.colorMuted ?? 'rgba(245,247,250,0.7)'}`,
+  `--cb-accent:${theme.accent ?? '#a855ff'}`,
+  `--cb-btn-bg:${theme.btnBg ?? '#a855ff'}`,
+  `--cb-btn-color:${theme.btnColor ?? '#ffffff'}`,
+  `--cb-border:${theme.border ?? 'rgba(168,85,255,0.25)'}`,
+  `--cb-modal-bg:${theme.modalBg ?? '#0d1730'}`,
+  /* Police : le bandeau HERITE de celle du site (font-family: inherit dans <style>).
+     Une police imposee ici arrivait apres le premier rendu, changeait la hauteur
+     du bandeau et decalait la page (CLS mesure le 16/09/2026 sur cinq sites), ou
+     ajoutait une police a charger aux sites qui ne l'utilisent pas. On n'emet la
+     declaration que si le site la demande explicitement. */
+  ...(theme.fontFamily ? [`font-family:${theme.fontFamily}`] : []),
+].join(';');
+---
+
+<!-- La variante panneau conserve le moteur et les préférences du bandeau. -->
+<div id="wt-consent-backdrop" hidden aria-hidden="true"></div>
+<div
+  id="wt-consent-banner"
+  data-presentation={presentation}
+  data-consent-version="0.3.1"
+  data-analytics-enabled={String(analyticsEnabled)}
+  aria-modal={isPanel ? "true" : undefined}
+  role="dialog"
+  aria-labelledby="wt-consent-title"
+  aria-describedby="wt-consent-desc"
+  tabindex="-1"
+  hidden
+  style={themeVars}
+>
+  <div class="cb-content">
+    <div class="cb-text">
+      <h2 id="wt-consent-title" class="cb-title">{t.title}</h2>
+      <p id="wt-consent-desc" class="cb-description">
+        {/* ⚠️ Le `{' '}` n'est PAS decoratif, et il ne se supprime pas.
+            Dans une expression Astro, la fin de ligne qui precede une balise est
+            SUPPRIMEE : la description sortait collee au lien, « personnaliser
+            votre choix.En savoir plus ». Une espace ecrite en fin de ligne
+            ci-dessus subirait le meme sort ; seule une expression explicite
+            survit.
+            Mesure le 16/08/2026 sur le parc en ligne : le defaut etait present
+            sur HUIT sites, sur chacune de leurs pages, le bandeau vivant dans le
+            layout. Un site y echappait, non par correction mais parce que son
+            texte surcharge se terminait par une espace - un contournement qui
+            aurait saute au premier nettoyage. */}
+        {t.description}{' '}
+        {!isPanel && <Fragment>{t.privacyLink && <a href={t.privacyLink} class="cb-link">{t.privacyLabel}</a>}</Fragment>}
+      </p>
+    </div>
+    <div class="cb-actions">
+      <button
+        type="button"
+        id="wt-consent-customize"
+        class="cb-btn cb-btn-outline"
+        aria-label={`${t.btnCustomize} : choisir les cookies par catégorie`}
+      >
+        {t.btnCustomize}
+      </button>
+      <button
+        type="button"
+        id="wt-consent-refuse"
+        class="cb-btn cb-btn-primary"
+        aria-label={`${t.btnRefuse} : refuser tous les cookies optionnels`}
+      >
+        {t.btnRefuse}
+      </button>
+      <button
+        type="button"
+        id="wt-consent-accept"
+        class="cb-btn cb-btn-primary"
+        aria-label={`${t.btnAccept} : accepter tous les cookies`}
+      >
+        {t.btnAccept}
+      </button>
+    </div>
+    {isPanel && <div class="cb-information">
+      <p>{t.essentialNote}</p>
+      <div class="cb-policy-links">
+        {t.cookieLink && <a class="cb-link" href={t.cookieLink}>{t.cookieLabel}</a>}
+        {t.privacyLink && <a class="cb-link" href={t.privacyLink}>{t.privacyLabel}</a>}
+      </div>
+    </div>}
+  </div>
+</div>
+
+<!-- Modal de personnalisation par categories -->
+<div
+  id="wt-consent-modal"
+  role="dialog"
+  aria-labelledby="wt-consent-modal-title"
+  aria-modal="true"
+  hidden
+  style={themeVars}
+>
+  <div class="cb-modal-overlay" id="wt-consent-overlay"></div>
+  <div class="cb-modal-box">
+    <div class="cb-modal-header">
+      <h2 id="wt-consent-modal-title">{t.modalTitle}</h2>
+      <button
+        type="button"
+        id="wt-consent-modal-close"
+        class="cb-modal-close"
+        aria-label={t.closeLabel}
+      >&#x2715;</button>
+    </div>
+
+    <div class="cb-modal-body">
+      <p class="cb-modal-intro">{t.modalIntro}</p>
+
+      <!-- Categorie : Essentiels (toujours actifs, toggle desactive) -->
+      <div class="cb-category">
+        <div class="cb-category-row">
+          <div class="cb-category-text">
+            <h3>{t.essentialTitle}</h3>
+            <p>{t.essentialDesc}</p>
+          </div>
+          <div class="cb-toggle cb-toggle-disabled">
+            <input
+              type="checkbox"
+              id="wt-consent-essential"
+              checked
+              disabled
+              aria-label={t.essentialAria}
+            />
+            <label for="wt-consent-essential" class="cb-toggle-label">
+              <span class="sr-only">{t.alwaysActive}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categorie : Analytics, seulement si un outil est configuré. -->
+      <div class="cb-category" hidden={!analyticsEnabled}>
+        <div class="cb-category-row">
+          <div class="cb-category-text">
+            <h3>{t.analyticsTitle}</h3>
+            <p>{t.analyticsDesc}</p>
+          </div>
+          <div class="cb-toggle">
+            <input
+              type="checkbox"
+              id="wt-consent-analytics"
+              aria-label={t.analyticsAria}
+            />
+            <label for="wt-consent-analytics" class="cb-toggle-label">
+              <span class="sr-only">{t.toggleLabel}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cb-modal-footer">
+      <button type="button" id="wt-consent-modal-refuse" class="cb-btn cb-btn-primary">{t.btnRefuse}</button>
+      <button type="button" id="wt-consent-save" class="cb-btn cb-btn-primary">
+        {t.btnSave}
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ STORAGE_KEY, CONSENT_TTL_MS }}>
+  (function () {
+    // STORAGE_KEY et CONSENT_TTL_MS sont injectes via define:vars (source unique
+    // de verite : consent-core.mjs).
+    var banner       = document.getElementById('wt-consent-banner');
+    var modal        = document.getElementById('wt-consent-modal');
+    var overlay      = document.getElementById('wt-consent-overlay');
+    var btnAccept    = document.getElementById('wt-consent-accept');
+    var btnRefuse    = document.getElementById('wt-consent-refuse');
+    var btnCustomize = document.getElementById('wt-consent-customize');
+    var btnSave      = document.getElementById('wt-consent-save');
+    var btnClose     = document.getElementById('wt-consent-modal-close');
+    var btnModalRefuse = document.getElementById('wt-consent-modal-refuse');
+    var backdrop = document.getElementById('wt-consent-backdrop');
+    var panel = banner && banner.getAttribute && banner.getAttribute('data-presentation') === 'panel';
+    var analyticsAvailable = !banner || !banner.getAttribute || banner.getAttribute('data-analytics-enabled') !== 'false';
+    var returnFocus = null;
+    var inertElements = [];
+    var originalOverflow = null;
+    var chkAnalytics = document.getElementById('wt-consent-analytics');
+
+    if (!banner || !modal) return;
+
+    /* ----------------------------------------------------------------
+     * Lecture localStorage - renvoie l'objet stocke ou null si absent
+     * ou expire (au-dela de CONSENT_TTL_MS, soit 6 mois).
+     * ---------------------------------------------------------------- */
+    function readStored() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        var parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed.timestamp !== 'number' || !parsed.choices || typeof parsed.choices.analytics !== 'boolean' || parsed.timestamp > Date.now()) return null;
+        if (Date.now() - parsed.timestamp > CONSENT_TTL_MS) return null;
+        return parsed;
+      } catch (e) { return null; }
+    }
+
+    /* ----------------------------------------------------------------
+     * Ecriture du consentement dans localStorage + mise a jour gtag.
+     * analyticsGranted : boolean
+     * ---------------------------------------------------------------- */
+    var analyticsActive = false;
+    function saveConsent(analyticsGranted) {
+      analyticsGranted = analyticsAvailable && analyticsGranted === true && navigator.globalPrivacyControl !== true;
+      var wasActive = analyticsActive || window.wtGtmLoaded === true;
+      analyticsActive = analyticsGranted;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          choices:   { analytics: analyticsGranted },
+          timestamp: Date.now(),
+          version: "2026-09-28"
+        }));
+      } catch (e) {
+        // Si le quota empêche la mise à jour, retirer l'ancien accord avant le
+        // rechargement : une écriture refusée ne doit jamais réactiver la mesure.
+        if (!analyticsGranted) { try { localStorage.removeItem(STORAGE_KEY); } catch (ignored) {} }
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          analytics_storage: analyticsGranted ? 'granted' : 'denied'
+        });
+      }
+      // Blocage prealable strict : on ne charge GTM (1re requete Google) qu'a
+      // l'instant du consentement explicite analytics.
+      if (analyticsGranted && typeof window.wtLoadGtm === 'function') {
+        window.wtLoadGtm();
+      }
+      if (!analyticsGranted && wasActive) {
+        // Le rechargement arrête aussi les bibliothèques déjà chargées. Le choix
+        // refusé est relu avant toute nouvelle requête de mesure.
+        if (typeof window.wtRevokeAnalytics === 'function') window.wtRevokeAnalytics();
+        if (window.location && typeof window.location.reload === 'function') window.location.reload();
+      }
+    }
+
+    function lockPage() {
+      if (originalOverflow !== null) return;
+      originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      if (!document.body.children) return;
+      var node = banner;
+      while (node && node.parentElement) {
+        Array.from(node.parentElement.children).forEach(function (el) {
+          if (el === node || el === modal || el === backdrop || ['SCRIPT', 'STYLE', 'LINK'].indexOf(el.tagName) !== -1) return;
+          inertElements.push([el, el.inert]);
+          el.inert = true;
+        });
+        if (node.parentElement === document.body) break;
+        node = node.parentElement;
+      }
+    }
+
+    function unlockPage() {
+      if (originalOverflow === null) return;
+      document.body.style.overflow = originalOverflow;
+      originalOverflow = null;
+      inertElements.forEach(function (entry) { entry[0].inert = entry[1]; });
+      inertElements = [];
+    }
+
+
+    /* ----------------------------------------------------------------
+     * Affichage initial du bandeau.
+     * Conditions : etat unknown (rien stocke ou expire) ET pas de GPC.
+     * ---------------------------------------------------------------- */
+    var gpcActive = navigator.globalPrivacyControl === true;
+    var stored    = readStored();
+    var isUnknown = analyticsAvailable && !gpcActive && !stored;
+    analyticsActive = !gpcActive && Boolean(stored && stored.choices.analytics);
+
+    if (isUnknown) {
+      banner.hidden = false;
+      if (panel) { if (backdrop) backdrop.hidden = false; lockPage(); }
+      requestAnimationFrame(function () {
+        banner.classList.add('cb-visible');
+        // Focus au frame SUIVANT, sans defilement : appele juste apres l'ajout de
+        // la classe, focus() forcait un recalcul de mise en page synchrone
+        // (forced-reflow-insight, 33 a 181 ms mesures le 16/09/2026). Un frame
+        // plus tard, la mise en page est deja calculee. Le focus reste place dans
+        // le bandeau a son ouverture (navigation clavier), sauf s'il a ete ferme
+        // entre-temps.
+        requestAnimationFrame(function () {
+          if (banner.hidden || !banner.classList.contains('cb-visible')) return;
+          banner.focus({ preventScroll: true });
+        });
+      });
+    }
+
+    /* ----------------------------------------------------------------
+     * Masquer le bandeau avec transition.
+     * ---------------------------------------------------------------- */
+    function hideBanner() {
+      banner.classList.remove('cb-visible');
+      banner.hidden = true;
+      if (backdrop) backdrop.hidden = true;
+      if (modal.hidden) unlockPage();
+    }
+
+    /* ----------------------------------------------------------------
+     * Tout accepter : analytics = true.
+     * ---------------------------------------------------------------- */
+    function acceptAll() {
+      saveConsent(true);
+      hideBanner();
+    }
+
+    /* ----------------------------------------------------------------
+     * Tout refuser : analytics = false.
+     * ---------------------------------------------------------------- */
+    function refuseAll() {
+      saveConsent(false);
+      hideBanner();
+    }
+
+    /* ----------------------------------------------------------------
+     * Ouvrir la modal (pre-coche selon le consentement stocke).
+     * ---------------------------------------------------------------- */
+    function openModal() {
+      var s = readStored();
+      returnFocus = document.activeElement;
+      chkAnalytics.checked = !gpcActive && (s ? s.choices.analytics === true : analyticsActive);
+      chkAnalytics.disabled = gpcActive || !analyticsAvailable;
+      lockPage();
+      modal.hidden = false;
+      requestAnimationFrame(function () { modal.classList.add('cb-visible'); });
+      window.setTimeout(function () { if (btnClose) btnClose.focus(); }, 100);
+    }
+
+    /* ----------------------------------------------------------------
+     * Fermer la modal avec transition.
+     * ---------------------------------------------------------------- */
+    function closeModal() {
+      modal.classList.remove('cb-visible');
+      modal.hidden = true;
+      if (!panel || banner.hidden) unlockPage();
+      if (returnFocus && typeof returnFocus.focus === 'function' && !returnFocus.closest('[hidden]')) returnFocus.focus({ preventScroll: true });
+    }
+
+    /* ----------------------------------------------------------------
+     * Enregistrer les choix de la modal.
+     * ---------------------------------------------------------------- */
+    function saveChoices() {
+      saveConsent(chkAnalytics.checked);
+      closeModal();
+      if (!banner.hidden) hideBanner();
+    }
+
+    /* ----------------------------------------------------------------
+     * Gestionnaires d'evenements.
+     * ---------------------------------------------------------------- */
+    btnAccept.addEventListener('click', acceptAll);
+    btnRefuse.addEventListener('click', refuseAll);
+    btnCustomize.addEventListener('click', openModal);
+    btnSave.addEventListener('click', saveChoices);
+    btnClose.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    if (btnModalRefuse) btnModalRefuse.addEventListener('click', function () { saveConsent(false); closeModal(); hideBanner(); });
+    if (backdrop) backdrop.addEventListener('click', refuseAll);
+
+    document.addEventListener('keydown', function (e) {
+      var active = !modal.hidden ? modal : (panel && !banner.hidden ? banner : null);
+      if (!active) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (active === modal) closeModal(); else refuseAll();
+      }
+      if (e.key === 'Tab') {
+        var focusable = Array.from(active.querySelectorAll('button:not([disabled]), a[href], input:not([disabled])'));
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey && (document.activeElement === first || document.activeElement === active)) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (document.activeElement === last || document.activeElement === active)) { e.preventDefault(); first.focus(); }
+      }
+    });
+
+    /* ----------------------------------------------------------------
+     * API publique - lien footer : window.openConsentSettings()
+     * ---------------------------------------------------------------- */
+    window.openConsentSettings = openModal;
+  })();
+</script>
+
+<style>
+  /* === Valeurs par defaut des variables CSS (surchargees par prop theme) === */
+  #wt-consent-banner,
+  #wt-consent-modal {
+    --cb-bg:          #0a0f1e;
+    --cb-color:       #f5f7fa;
+    --cb-color-muted: rgba(245, 247, 250, 0.7);
+    --cb-accent:      #a855ff;
+    --cb-btn-bg:      #a855ff;
+    --cb-btn-color:   #ffffff;
+    --cb-border:      rgba(168, 85, 255, 0.25);
+    --cb-modal-bg:    #0d1730;
+  }
+
+  /* ===== BANDEAU ===== */
+  #wt-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--cb-bg);
+    border-top: 1px solid var(--cb-border);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+    padding: 1.25rem 1.5rem;
+    color: var(--cb-color);
+    /* Police du site heritee (surcharge possible : prop theme.fontFamily). */
+    font-family: inherit;
+    font-size: 0.9rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  #wt-consent-banner.cb-visible { transform: translateY(0); }
+
+  .cb-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .cb-text { flex: 1 1 280px; min-width: 240px; }
+
+  .cb-title {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--cb-accent);
+  }
+
+  .cb-description {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--cb-color);
+  }
+
+  .cb-link {
+    color: var(--cb-accent);
+    text-decoration: underline;
+    margin-left: 0.25rem;
+  }
+  .cb-link:hover { opacity: 0.8; }
+
+  .cb-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* Boutons : base commune garantissant la meme taille et le meme poids (CNIL) */
+  .cb-btn {
+    padding: 0.7rem 1.4rem;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 140px;
+    text-align: center;
+    line-height: 1.25;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .cb-btn:active { transform: scale(0.97); }
+
+  /* Bouton primaire - Tout accepter / Tout refuser (poids visuel identique) */
+  .cb-btn-primary {
+    background: var(--cb-btn-bg);
+    color: var(--cb-btn-color);
+    border-color: var(--cb-btn-bg);
+  }
+  .cb-btn-primary:hover { opacity: 0.82; }
+  .cb-btn-primary:focus-visible { opacity: 0.82; outline: 2px solid var(--cb-accent); outline-offset: 2px; }
+
+  /* Bouton secondaire - Personnaliser */
+  .cb-btn-outline {
+    background: transparent;
+    color: var(--cb-accent);
+    border-color: var(--cb-accent);
+  }
+  .cb-btn-outline:hover { background: rgba(168, 85, 255, 0.1); }
+  .cb-btn-outline:focus-visible {
+    background: rgba(168, 85, 255, 0.1);
+    outline: 2px solid var(--cb-accent);
+    outline-offset: 2px;
+  }
+
+  /* ===== MODAL ===== */
+  #wt-consent-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    /* Police du site heritee (surcharge possible : prop theme.fontFamily). */
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+  #wt-consent-modal.cb-visible { opacity: 1; }
+
+  /* Respecte l'attribut [hidden]. Sans cette regle, le selecteur d'ID
+     #wt-consent-modal { display: flex } surclasse la regle UA
+     [hidden] { display: none } : la modale fermee (overlay plein ecran, opacity 0,
+     z-index 10000) reste affichee et recouvre le bandeau (z-index 9999), ce qui
+     bloque tous les clics sur les sites dont le CSS global ne force pas [hidden].
+     La specificite #id[attr] surclasse #id, sans !important. */
+  #wt-consent-modal[hidden] { display: none; }
+  #wt-consent-banner[hidden] { display: none; }
+
+  .cb-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+  }
+
+  .cb-modal-box {
+    position: relative;
+    background: var(--cb-modal-bg);
+    color: var(--cb-color);
+    border: 1px solid var(--cb-border);
+    border-radius: 10px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  }
+
+  .cb-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--cb-border);
+  }
+  .cb-modal-header h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cb-accent);
+  }
+
+  .cb-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--cb-color);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+    opacity: 0.7;
+  }
+  .cb-modal-close:hover { opacity: 1; }
+  .cb-modal-close:focus-visible { opacity: 1; outline: 2px solid var(--cb-accent); outline-offset: 2px; }
+
+  .cb-modal-body { padding: 1.25rem 1.5rem; }
+
+  .cb-modal-intro {
+    margin: 0 0 1.25rem 0;
+    line-height: 1.55;
+    color: var(--cb-color-muted);
+  }
+
+  .cb-category {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--cb-border);
+  }
+  .cb-category[hidden] { display: none; }
+  .cb-category:last-child { border-bottom: none; }
+
+  .cb-category-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .cb-category-text { flex: 1; }
+  .cb-category-text h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--cb-color);
+  }
+  .cb-category-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--cb-color-muted);
+  }
+
+  /* Toggle switch */
+  .cb-toggle { position: relative; flex-shrink: 0; }
+  .cb-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+  .cb-toggle-label {
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    background: #374151;
+    border-radius: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .cb-toggle-label::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .cb-toggle input:checked + .cb-toggle-label { background: var(--cb-accent); }
+  .cb-toggle input:checked + .cb-toggle-label::before { transform: translateX(22px); }
+  .cb-toggle input:focus-visible + .cb-toggle-label {
+    outline: 2px solid var(--cb-accent);
+    outline-offset: 2px;
+  }
+
+  /* Essentiels : toujours actifs, curseur desactive */
+  .cb-toggle-disabled .cb-toggle-label {
+    background: #374151;
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
+  .cb-toggle-disabled .cb-toggle-label::before { transform: translateX(22px); }
+  /* Specifique : impose le fond gris meme quand le checkbox est checked */
+  .cb-toggle.cb-toggle-disabled input:checked + .cb-toggle-label { background: #374151; }
+
+  .cb-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--cb-border);
+    text-align: right;
+  }
+
+  /* Accessibilite */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    #wt-consent-banner { padding: 1rem; }
+    .cb-content { flex-direction: column; align-items: stretch; }
+    /* L'axe principal passe en colonne : la base de 280px de .cb-text, pensee pour la
+       LARGEUR en mode ligne, deviendrait une HAUTEUR imposee. Le bloc de texte occupait
+       alors 280px pour ~115px de contenu, et le bandeau plus de la moitie de l'ecran. */
+    .cb-text { flex-basis: auto; min-width: 0; }
+    .cb-actions { flex-direction: column; width: 100%; }
+    .cb-btn { width: 100%; min-width: 0; }
+    .cb-modal-box { max-height: 95vh; }
+  }
+  /* Panneau opt-in : mêmes variables de marque et même poids des deux choix. */
+  #wt-consent-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 45%); z-index: 9998; }
+  #wt-consent-backdrop[hidden] { display: none; }
+  #wt-consent-banner[data-presentation="panel"] {
+    inset: 50% auto auto 50%; width: min(680px, calc(100% - 32px));
+    max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain;
+    box-sizing: border-box; padding: 32px; border: 1px solid var(--cb-border);
+    border-radius: 16px; box-shadow: 0 24px 80px rgb(0 0 0 / 24%);
+    transform: translate(-50%, -50%); transition: opacity .2s ease; opacity: 0;
+    font-size: 16px;
+  }
+  #wt-consent-banner[data-presentation="panel"]:focus { outline: none; }
+  #wt-consent-banner[data-presentation="panel"].cb-visible { opacity: 1; }
+  #wt-consent-banner[data-presentation="panel"] .cb-content { display: grid; gap: 24px; }
+  #wt-consent-banner[data-presentation="panel"] .cb-text { min-width: 0; }
+  #wt-consent-banner[data-presentation="panel"] .cb-title { color: var(--cb-color); font-size: 24px; line-height: 1.25; margin-bottom: 14px; }
+  #wt-consent-banner[data-presentation="panel"] .cb-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  #wt-consent-banner[data-presentation="panel"] .cb-btn { min-width: 0; min-height: 52px; width: 100%; padding: 12px 10px; font-size: 15px; }
+  .cb-information p { margin: 0 0 16px; color: var(--cb-color); font-size: 13px; line-height: 1.5; }
+  .cb-policy-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; }
+  .cb-policy-links .cb-link { margin: 0; }
+  .cb-modal-footer { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+  .cb-modal-footer .cb-btn { flex: 1; }
+  .cb-modal-close { min-height: 44px; min-width: 44px; }
+  @media (max-width: 600px) {
+    #wt-consent-banner[data-presentation="panel"] { inset: auto 12px 12px; width: auto; max-height: calc(100dvh - 24px); padding: 24px; border-radius: 14px; transform: none; }
+    #wt-consent-banner[data-presentation="panel"] .cb-content { gap: 18px; }
+    #wt-consent-banner[data-presentation="panel"] .cb-title { font-size: 22px; }
+    #wt-consent-banner[data-presentation="panel"] .cb-actions { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #wt-consent-banner, #wt-consent-modal, .cb-btn, .cb-toggle-label, .cb-toggle-label::before { transition: none; }
+  }
+</style>
