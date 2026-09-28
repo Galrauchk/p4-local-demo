@@ -77,7 +77,7 @@ const themeVars = [
 <div
   id="wt-consent-banner"
   data-presentation={presentation}
-  data-consent-version="0.3.2"
+  data-consent-version="0.3.3"
   data-analytics-enabled={String(analyticsEnabled)}
   aria-modal={isPanel ? "true" : undefined}
   role="dialog"
@@ -241,6 +241,11 @@ const themeVars = [
 
     if (!banner || !modal) return;
 
+    function clearAttribution() {
+      try { sessionStorage.removeItem('wt_attrib'); } catch (ignored) {}
+      try { sessionStorage.removeItem('site_attribution'); } catch (ignored) {}
+    }
+
     /* ----------------------------------------------------------------
      * Lecture localStorage - renvoie l'objet stocke ou null si absent
      * ou expire (au-dela de CONSENT_TTL_MS, soit 6 mois).
@@ -265,6 +270,7 @@ const themeVars = [
       analyticsGranted = analyticsAvailable && analyticsGranted === true && navigator.globalPrivacyControl !== true;
       var wasActive = analyticsActive || window.wtGtmLoaded === true;
       analyticsActive = analyticsGranted;
+      if (!analyticsGranted) clearAttribution();
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           choices:   { analytics: analyticsGranted },
@@ -328,6 +334,24 @@ const themeVars = [
     var stored    = readStored();
     var isUnknown = analyticsAvailable && !gpcActive && !stored;
     analyticsActive = !gpcActive && Boolean(stored && stored.choices.analytics);
+    if (!analyticsActive) clearAttribution();
+
+    window.addEventListener('storage', function (event) {
+      if (event.key !== STORAGE_KEY) return;
+      var current = readStored();
+      var granted = analyticsAvailable && navigator.globalPrivacyControl !== true && Boolean(current && current.choices.analytics);
+      var wasActive = analyticsActive || window.wtGtmLoaded === true;
+      analyticsActive = granted;
+      if (!granted) clearAttribution();
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', { analytics_storage: granted ? 'granted' : 'denied' });
+      }
+      if (granted && typeof window.wtLoadGtm === 'function') window.wtLoadGtm();
+      if (!granted && wasActive) {
+        if (typeof window.wtRevokeAnalytics === 'function') window.wtRevokeAnalytics();
+        window.location.reload();
+      }
+    });
 
     if (isUnknown) {
       banner.hidden = false;
