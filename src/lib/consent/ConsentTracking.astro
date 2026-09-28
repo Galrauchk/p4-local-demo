@@ -24,6 +24,11 @@ const snippet = buildGtmSnippet(gtmId);
     var gtmLoaded = false;
     window.wtLoadGtm = function () {
       if (gtmLoaded || !snippet) return;
+      // Les clics places dans dataLayer avant l'accord ne doivent pas etre
+      // rejoues lorsque le conteneur est enfin charge.
+      window.dataLayer = window.dataLayer.filter(function (entry) {
+        return !entry || typeof entry !== 'object' || !Object.prototype.hasOwnProperty.call(entry, 'event');
+      });
       gtmLoaded = true;
       window.wtGtmLoaded = true;
       var s = document.createElement('script');
