@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+# Assistants IA / LLM - explicitement autorisés (standard WebTrafic, @galrauchk/site-tools)
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Bingbot
+User-agent: meta-externalagent
+User-agent: Meta-ExternalFetcher
+User-agent: MistralAI-User
+User-agent: DuckAssistBot
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://p4-local-demo.netlify.app/sitemap-index.xml
+
+# Index pour les agents IA / LLM (llmstxt.org)
+# https://p4-local-demo.netlify.app/llms.txt - index
+# https://p4-local-demo.netlify.app/llms-full.txt - contenu intégral
