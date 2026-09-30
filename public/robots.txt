@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# Assistants IA / LLM - explicitement autorisés (standard WebTrafic, @galrauchk/site-tools)
+# Assistants IA / LLM - explicitement autorisés
 User-agent: GPTBot
 User-agent: ChatGPT-User
 User-agent: OAI-SearchBot
