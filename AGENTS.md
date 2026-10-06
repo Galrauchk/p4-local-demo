@@ -1,6 +1,6 @@
 # AGENTS.md - p4-local-demo
 
-<!-- socle-webtrafic:debut (copie de webtrafic-workspace/00_AGENCE/socle-agents.md, ne pas editer ici) -->
+<!-- socle-webtrafic:debut (copie de webtrafic-workspace/50_OPERATIONS_TECH/docs/socle-agents.md, ne pas editer ici) -->
 
 ## Socle WebTrafic (commun à tous les dépôts)
 
