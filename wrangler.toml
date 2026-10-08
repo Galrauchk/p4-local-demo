@@ -1,4 +1,4 @@
-# Préparation uniquement. Aucun déploiement ni changement de domaine.
+# Production : sous-domaine de webtrafic.fr (décision Jeffrey du 08/10/2026, chantier 310).
 # Modèle Electium main 94f6c4d, adaptation du nom et des règles d'URL existantes.
 name = "p4-local-demo"
 main = "worker/index.mjs"
@@ -6,11 +6,11 @@ compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 preview_urls = true
-routes = []
+routes = [{ pattern = "demo-local.webtrafic.fr", custom_domain = true }]
 
 # secrets = []
 [vars]
-DOMAINE_CANONIQUE = ""
+DOMAINE_CANONIQUE = "demo-local.webtrafic.fr"
 BARRE_FINALE = "ignore"
 
 [assets]

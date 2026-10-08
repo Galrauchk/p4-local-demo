@@ -21,8 +21,8 @@ User-agent: DuckAssistBot
 User-agent: Amazonbot
 Allow: /
 
-Sitemap: https://p4-local-demo.netlify.app/sitemap-index.xml
+Sitemap: https://demo-local.webtrafic.fr/sitemap-index.xml
 
 # Index pour les agents IA / LLM (llmstxt.org)
-# https://p4-local-demo.netlify.app/llms.txt - index
-# https://p4-local-demo.netlify.app/llms-full.txt - contenu intégral
+# https://demo-local.webtrafic.fr/llms.txt - index
+# https://demo-local.webtrafic.fr/llms-full.txt - contenu intégral

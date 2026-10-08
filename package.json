@@ -33,6 +33,6 @@
     "wrangler": "4.143.0"
   },
   "cloudflare": {
-    "domaine": "p4-local-demo.netlify.app"
+    "domaine": "demo-local.webtrafic.fr"
   }
 }
