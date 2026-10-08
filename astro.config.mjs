@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://p4-local-demo.netlify.app',
+  site: 'https://demo-local.webtrafic.fr',
   integrations: [
     react(),
     sitemap({
