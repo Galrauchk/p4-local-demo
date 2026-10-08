@@ -31,3 +31,10 @@ Une future redirection depuis Netlify devra être préparée avant toute fermetu
 
 Sources officielles : [aperçus privés](https://developers.cloudflare.com/workers/configuration/cloudflare-access/),
 [règles d'URL des fichiers HTML](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/).
+
+## Variables du build
+
+Les workflows transmettent aussi les variables publiques lues par le frontend :
+`PUBLIC_GTM_ID`.
+Comparer leurs valeurs à celles du site Netlify avant toute activation ; aucun secret métier
+ne doit être exposé au build public. Les valeurs restent à renseigner dans GitHub.

@@ -33,6 +33,7 @@ jobs:
         env:
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
           VISITOR_ACK_ENABLED: "true"
+          PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
       - name: Traduire les règles Netlify pour Cloudflare
         run: npm run test:cloudflare && npm run cf:check
       - name: Publier la version d'aperçu

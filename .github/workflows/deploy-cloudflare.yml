@@ -32,7 +32,7 @@ jobs:
         env:
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
           VISITOR_ACK_ENABLED: "true"
-      # Comme ci.yml : test:simulateurs exige le Chrome du Mac, il ne tourne pas sur vps-ci.
+          PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
       - name: Tester
         run: npm run test:cloudflare
       - name: Traduire les règles Netlify pour Cloudflare
