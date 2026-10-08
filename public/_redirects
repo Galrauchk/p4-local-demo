@@ -1,0 +1,2 @@
+# Ancienne adresse Netlify vers le sous-domaine de webtrafic.fr (chantier 310, 08/10/2026)
+https://p4-local-demo.netlify.app/* https://demo-local.webtrafic.fr/:splat 301!
