@@ -9,7 +9,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "cf:assets": "node scripts/cloudflare-assets.mjs",
+    "test:cloudflare": "node --test tests/cloudflare-assets.test.mjs tests/worker-canonique.test.mjs tests/worker-env.test.mjs",
+    "cf:check": "npm run cf:assets && npm run test:cloudflare && wrangler deploy --dry-run",
+    "cf:dev": "npm run cf:assets && wrangler dev --local"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
@@ -23,5 +27,12 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "smol-toml": "1.9.0",
+    "wrangler": "4.143.0"
+  },
+  "cloudflare": {
+    "domaine": "p4-local-demo.netlify.app"
   }
 }

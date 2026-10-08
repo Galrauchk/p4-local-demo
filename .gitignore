@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Cloudflare : sorties locales uniquement
+.wrangler/
+worker/routes.generated.mjs
