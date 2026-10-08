@@ -23,3 +23,5 @@ jobs:
         run: npm ci
       - name: Construire le site
         run: npm run build
+      - name: Vérifier le Worker après le build
+        run: npm run cf:check

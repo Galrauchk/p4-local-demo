@@ -1,0 +1,21 @@
+# Préparation uniquement. Aucun déploiement ni changement de domaine.
+# Modèle Electium main 94f6c4d, adaptation du nom et des règles d'URL existantes.
+name = "p4-local-demo"
+main = "worker/index.mjs"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = true
+routes = []
+
+# secrets = []
+[vars]
+DOMAINE_CANONIQUE = ""
+BARRE_FINALE = "ignore"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
