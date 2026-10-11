@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
-          cache: npm
+          # pas de cache GitHub : le runner auto-hébergé garde ~/.npm sur son disque (le cache GitHub se retélécharge à 5 Mo/s à chaque job)
       - name: Installer les dépendances
         run: npm ci
         env:
