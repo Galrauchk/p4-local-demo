@@ -4,7 +4,8 @@ dist/
 .astro/
 
 # dependencies
-node_modules/
+# Sans barre finale : ignore aussi un lien symbolique node_modules (worktree).
+node_modules
 
 # logs
 npm-debug.log*
